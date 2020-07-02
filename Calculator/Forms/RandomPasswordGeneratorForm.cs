@@ -195,6 +195,12 @@ namespace Calculator
                 return;
             }
 
+            if (uniqueSequenceCheckBox.Checked && !CharsetIsUnique(CharsetCharsTextBoxText))
+            {
+                MessageBox.Show("Charset has duplicate items", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             Clear();
 
             generateButton.Enabled = false;
@@ -224,6 +230,25 @@ namespace Calculator
             progressBar.Value = 100;
             generateButton.Enabled = true;
             saveToFileButton.Enabled = true;
+        }
+
+        private bool CharsetIsUnique(string charset)
+        {
+            // using two bytes size bool array for Unicode chars
+            bool[] array = new bool[char.MaxValue];
+
+            foreach (var ch in charset)
+            {
+                if (array[ch])
+                {
+                    // return false, when duplicate char was found
+                    return false;
+                }
+
+                array[ch] = true;
+            }
+
+            return true;
         }
 
         private void GenerateRandomPasswords(string charset, int qty, int length)
