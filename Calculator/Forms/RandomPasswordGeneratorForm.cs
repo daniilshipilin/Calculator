@@ -229,15 +229,16 @@ namespace Calculator
         private void GenerateRandomPasswords(string charset, int qty, int length)
         {
             _rndPasswords = new string[qty];
+            INumberGenerator rnd = new RNGNumberGenerator();
 
-            for (int i = 0; i < qty; i++)
+            for (int i = 0; i < _rndPasswords.Length; i++)
             {
                 char[] charArr = new char[length];
 
-                for (int j = 0; j < length; j++)
+                for (int j = 0; j < charArr.Length; j++)
                 {
-                    int rnd = RandomNumberGenerator.GetRandomInt32(charset.Length);
-                    charArr[j] = charset[rnd];
+                    int random = rnd.GetInt32(charset.Length);
+                    charArr[j] = charset[random];
                 }
 
                 _rndPasswords[i] = new string(charArr);
@@ -248,23 +249,24 @@ namespace Calculator
         {
             _rndPasswords = new string[qty];
             _retries = 0;
+            INumberGenerator rnd = new RNGNumberGenerator();
 
-            for (int i = 0; i < qty; i++)
+            for (int i = 0; i < _rndPasswords.Length; i++)
             {
                 char[] charArr = new char[length];
 
-                for (int j = 0; j < length; j++)
+                for (int j = 0; j < charArr.Length; j++)
                 {
-                    int rnd = RandomNumberGenerator.GetRandomInt32(charset.Length);
+                    int random = rnd.GetInt32(charset.Length);
 
                     // generate new random number, until its char representation is unique
-                    while (charArr.Contains(charset[rnd]))
+                    while (charArr.Contains(charset[random]))
                     {
-                        rnd = RandomNumberGenerator.GetRandomInt32(charset.Length);
+                        random = rnd.GetInt32(charset.Length);
                         _retries++;
                     }
 
-                    charArr[j] = charset[rnd];
+                    charArr[j] = charset[random];
                 }
 
                 _rndPasswords[i] = new string(charArr);

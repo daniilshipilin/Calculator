@@ -60,7 +60,6 @@ namespace Calculator
 
         // random number buffer
         int[] _rndNumbers = null;
-        readonly Random _rnd = new Random();
 
         // Quantity, Min & Max values
         int _qty = 0;
@@ -211,19 +210,22 @@ namespace Calculator
         {
             _rndNumbers = new int[_qty];
             progress.Report(100);
+            INumberGenerator rnd;
+
+            if (rngCheckBox.Checked)
+            {
+                // using RNGCryptoServiceProvider
+                rnd = new RNGNumberGenerator();
+            }
+            else
+            {
+                // using Random
+                rnd = new RandomNumberGenerator();
+            }
 
             for (int i = 0; i < _qty; i++)
             {
-                if (rngCheckBox.Checked)
-                {
-                    // using RNGCryptoServiceProvider
-                    _rndNumbers[i] = RandomNumberGenerator.GetRandomInt32(_minVal, _maxVal);
-                }
-                else
-                {
-                    // using Random
-                    _rndNumbers[i] = _rnd.Next(_minVal, _maxVal);
-                }
+                _rndNumbers[i] = rnd.GetInt32(_minVal, _maxVal);
             }
 
             progress.Report(0);
@@ -322,6 +324,18 @@ namespace Calculator
 
             var stopWatch = Stopwatch.StartNew();
             var bmp = new Bitmap(x_width, y_height);
+            INumberGenerator rnd;
+
+            if (rngCheckBox.Checked)
+            {
+                // using RNGCryptoServiceProvider
+                rnd = new RNGNumberGenerator();
+            }
+            else
+            {
+                // using Random
+                rnd = new RandomNumberGenerator();
+            }
 
             // create random pixels
             for (int y = 0; y < y_height; y++)
@@ -330,17 +344,8 @@ namespace Calculator
                 {
                     byte[] argb = new byte[4];
 
-                    // generate random ARGB value
-                    if (rngCheckBox.Checked)
-                    {
-                        // using RNGCryptoServiceProvider
-                        RandomNumberGenerator.GetBytes(argb);
-                    }
-                    else
-                    {
-                        // using Random
-                        _rnd.NextBytes(argb);
-                    }
+                    // generate random ARGB value by filling byte array
+                    rnd.FillBytes(argb);
 
                     // set ARGB value
                     bmp.SetPixel(x, y, Color.FromArgb(argb[0], argb[1], argb[2], argb[3]));

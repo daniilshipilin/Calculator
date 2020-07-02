@@ -1,46 +1,44 @@
 using System;
-using System.Security.Cryptography;
 
 namespace Calculator.Helpers
 {
-    public static class RandomNumberGenerator
+    public class RandomNumberGenerator : INumberGenerator
     {
-        static readonly RNGCryptoServiceProvider _rng = new RNGCryptoServiceProvider();
+        protected static readonly Random _rnd = new Random();
 
-        public static int GetRandomInt32()
+        /// <summary>
+        /// Returns a non-negative random integer. Method uses Random class.
+        /// </summary>
+        public int GetInt32()
         {
-            byte[] bytes = new byte[sizeof(int)];
-            _rng.GetBytes(bytes);
-
-            return BitConverter.ToInt32(bytes, 0);
+            return _rnd.Next();
         }
 
-        public static int GetRandomInt32(int maxVal)
+        /// <summary>
+        /// Returns a non-negative random integer that is less than the specified maximum.
+        /// Method uses Random class.
+        /// </summary>
+        public int GetInt32(int maxVal)
         {
-            return GetRandomInt32(0, maxVal);
+            return _rnd.Next(maxVal);
         }
 
-        public static int GetRandomInt32(int minVal, int maxVal)
+        /// <summary>
+        /// Returns a random integer that is within a specified range.
+        /// Method uses Random class.
+        /// </summary>
+        public int GetInt32(int minVal, int maxVal)
         {
-            if (minVal > maxVal)
-            {
-                throw new ArgumentOutOfRangeException(nameof(minVal));
-            }
-
-            if (minVal == maxVal) { return minVal; }
-
-            byte[] bytes = new byte[sizeof(int)];
-            _rng.GetBytes(bytes);
-            int generatedValue = Math.Abs(BitConverter.ToInt32(bytes, 0));
-            int diff = maxVal - minVal;
-            int mod = generatedValue % diff;
-
-            return minVal + mod;
+            return _rnd.Next(minVal, maxVal);
         }
 
-        public static void GetBytes(byte[] bytes)
+        /// <summary>
+        /// Fills the elements of a specified array of bytes with random numbers.
+        /// Method uses Random class.
+        /// </summary>
+        public void FillBytes(byte[] bytes)
         {
-            _rng.GetBytes(bytes);
+            _rnd.NextBytes(bytes);
         }
     }
 }

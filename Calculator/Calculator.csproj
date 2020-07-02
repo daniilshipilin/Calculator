@@ -103,6 +103,8 @@
     <Compile Include="Forms\FileHashCalculatorForm.Designer.cs">
       <DependentUpon>FileHashCalculatorForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\INumberGenerator.cs" />
+    <Compile Include="Helpers\RNGNumberGenerator.cs" />
     <Compile Include="Helpers\RandomNumberGenerator.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
