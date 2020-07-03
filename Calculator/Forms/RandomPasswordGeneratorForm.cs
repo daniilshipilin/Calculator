@@ -104,9 +104,6 @@ namespace Calculator
         // random passwords string array
         string[] _rndPasswords;
 
-        // random number generator retries counter
-        int _retries = 0;
-
         #endregion
 
         public RandomPasswordGeneratorForm()
@@ -222,9 +219,7 @@ namespace Calculator
             sw.Stop();
             OutputTextBoxText = string.Join(Environment.NewLine, _rndPasswords);
             _rndPasswords = null;
-            ToolStripStatusLabelText = (uniqueSequenceCheckBox.Checked)
-                                       ? $"Elapsed: {sw.ElapsedMilliseconds} ms. retries: {_retries} ({((double)_retries / (qty * length)) * 100:0.00}%)"
-                                       : $"Elapsed: {sw.ElapsedMilliseconds} ms.";
+            ToolStripStatusLabelText = $"Elapsed: {sw.ElapsedMilliseconds} ms.";
 
             progressBar.Style = ProgressBarStyle.Blocks;
             progressBar.Value = 100;
@@ -258,43 +253,36 @@ namespace Calculator
 
             for (int i = 0; i < _rndPasswords.Length; i++)
             {
-                char[] charArr = new char[length];
+                char[] randomPassword = new char[length];
 
-                for (int j = 0; j < charArr.Length; j++)
+                for (int j = 0; j < randomPassword.Length; j++)
                 {
-                    int random = rnd.GetInt32(charset.Length);
-                    charArr[j] = charset[random];
+                    int pos = rnd.GetInt32(charset.Length);
+                    randomPassword[j] = charset[pos];
                 }
 
-                _rndPasswords[i] = new string(charArr);
+                _rndPasswords[i] = new string(randomPassword);
             }
         }
 
         private void GenerateRandomUniqueSequencePasswords(string charset, int qty, int length)
         {
             _rndPasswords = new string[qty];
-            _retries = 0;
             INumberGenerator rnd = new RNGNumberGenerator();
 
             for (int i = 0; i < _rndPasswords.Length; i++)
             {
-                char[] charArr = new char[length];
+                List<char> charsetList = charset.ToList();
+                char[] randomPassword = new char[length];
 
-                for (int j = 0; j < charArr.Length; j++)
+                for (int j = 0; j < randomPassword.Length; j++)
                 {
-                    int random = rnd.GetInt32(charset.Length);
-
-                    // generate new random number, until its char representation is unique
-                    while (charArr.Contains(charset[random]))
-                    {
-                        random = rnd.GetInt32(charset.Length);
-                        _retries++;
-                    }
-
-                    charArr[j] = charset[random];
+                    int pos = rnd.GetInt32(charsetList.Count);
+                    randomPassword[j] = charsetList[pos];
+                    charsetList.RemoveAt(pos);
                 }
 
-                _rndPasswords[i] = new string(charArr);
+                _rndPasswords[i] = new string(randomPassword);
             }
         }
 
