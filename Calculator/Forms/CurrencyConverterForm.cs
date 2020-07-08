@@ -9,8 +9,6 @@ namespace Calculator
 {
     public partial class CurrencyConverterForm : Form
     {
-        readonly CurrencyConverter _cc = new CurrencyConverter();
-
         public CurrencyConverterForm()
         {
             InitializeComponent();
@@ -45,10 +43,10 @@ namespace Calculator
             currencyFromComboBox.Text = currencyToComboBox.SelectedItem.ToString();
             currencyToComboBox.Text = tmpCurrencyFrom;
 
-            _cc.SwitchAmounts();
+            CurrencyConverter.SwapAmounts();
 
-            amountFromTextBox.Text = _cc.AmountFrom.ToString();
-            amountToTextBox.Text = _cc.AmountTo.ToString();
+            amountFromTextBox.Text = CurrencyConverter.AmountFrom.ToString();
+            amountToTextBox.Text = CurrencyConverter.AmountTo.ToString();
         }
 
         private async void GetRatesButton_Click(object sender, EventArgs e)
@@ -87,8 +85,8 @@ namespace Calculator
             }
 
             // bind currencies list with currencies combobox
-            currencyFromComboBox.DataSource = new BindingSource { DataSource = _cc.JSON.Rates.Keys };
-            currencyToComboBox.DataSource = new BindingSource { DataSource = _cc.JSON.Rates.Keys };
+            currencyFromComboBox.DataSource = new BindingSource { DataSource = CurrencyConverter.Currencies.Rates.Keys };
+            currencyToComboBox.DataSource = new BindingSource { DataSource = CurrencyConverter.Currencies.Rates.Keys };
 
             // select previously selected item, because of index reset after data source update
             currencyFromComboBox.SelectedIndex = currencyFromComboBox.Items.IndexOf(currencyFrom);
@@ -99,25 +97,25 @@ namespace Calculator
         {
             if (currencyFromComboBox.SelectedItem != null && currencyToComboBox.SelectedItem != null)
             {
-                _cc.CalculateConversionRateTo(currencyFromComboBox.SelectedItem.ToString(), currencyToComboBox.SelectedItem.ToString());
+                CurrencyConverter.CalculateConversionRateTo(currencyFromComboBox.SelectedItem.ToString(), currencyToComboBox.SelectedItem.ToString());
             }
 
-            rateToTextBox.Text = _cc.RateTo.ToString();
+            rateToTextBox.Text = CurrencyConverter.RateTo.ToString();
         }
 
         private async Task UpdateCurrencyRates()
         {
             statusLabel.Text = "Updating currency rates";
 
-            await _cc.GetDataAsync();
+            await CurrencyConverter.UpdateCurrenciesAsync();
 
             UpdateCurrenciesComboBoxes();
 
             UpdateCurrenciesRatesTextBoxes();
 
-            baseCurrencyTextBox.Text = _cc.JSON.Base;
+            baseCurrencyTextBox.Text = CurrencyConverter.Currencies.Base;
 
-            dateStampTextBox.Text = _cc.JSON.TimestampLocalDateTime.ToString();
+            dateStampTextBox.Text = CurrencyConverter.Currencies.TimestampLocalDateTime.ToString();
 
             statusLabel.Text = "Currency rates updated";
         }
@@ -162,9 +160,9 @@ namespace Calculator
                         updateCheckBox.Checked = false;
                     }
 
-                    _cc.ConvertCurrency(decimal.Parse(amountFromTextBox.Text));
+                    CurrencyConverter.ConvertCurrency(decimal.Parse(amountFromTextBox.Text));
 
-                    amountToTextBox.Text = _cc.AmountTo.ToString();
+                    amountToTextBox.Text = CurrencyConverter.AmountTo.ToString();
 
                     statusLabel.Text = "Converted";
                 }
@@ -196,7 +194,7 @@ namespace Calculator
         {
             var sb = new StringBuilder();
 
-            foreach (var pair in _cc.JSON.Rates)
+            foreach (var pair in CurrencyConverter.Currencies.Rates)
             {
                 sb.AppendLine($"{pair.Key}: {pair.Value}");
             }
