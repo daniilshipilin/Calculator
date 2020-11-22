@@ -1,6 +1,6 @@
 ![calculator.ico](./Calculator/Images/calculator.ico)
 # Calculator
-### Author: Daniil Shipilin (daniil.shipilin@gmail.com)
+### Author: Daniil Shipilin
 A simple basic calculator.
 ### Additional Features:
 * Number base converter
