@@ -1,11 +1,11 @@
-using System;
-using System.Configuration;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-
 namespace Calculator.Helpers
 {
+    using System;
+    using System.Configuration;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+
     public static class AppSettings
     {
         public static bool AssemblyExist()
@@ -41,7 +41,7 @@ namespace Calculator.Helpers
         {
             var appSettings = ConfigurationManager.AppSettings;
 
-            return appSettings[key] ?? throw new ConfigurationErrorsException(); ;
+            return appSettings[key] ?? throw new ConfigurationErrorsException();
         }
 
         public static bool KeyExist(string key)
@@ -77,27 +77,5 @@ namespace Calculator.Helpers
         {
             ConfigurationManager.RefreshSection("appSettings");
         }
-
-        #region Custom configuration sections
-
-        // Custom configuration sections
-        //public void AddCustomRegionKey(string region, string key, string value)
-        //{
-        //    var xmlDoc = new XmlDocument();
-        //    xmlDoc.Load(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
-
-        //    // create new node <add key="Key" value="1234" />
-        //    var nodeRegion = xmlDoc.CreateElement("add");
-
-        //    nodeRegion.SetAttribute("key", key);
-        //    nodeRegion.SetAttribute("value", value);
-
-        //    xmlDoc.SelectSingleNode($"//{region}").AppendChild(nodeRegion);
-        //    xmlDoc.Save(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
-
-        //    ConfigurationManager.RefreshSection($"{region}");
-        //}
-
-        #endregion
     }
 }

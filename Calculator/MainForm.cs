@@ -1,80 +1,24 @@
-using Calculator.Helpers;
-using Jace;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Updater;
+#nullable enable
 
 namespace Calculator
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using System.Windows.Forms;
+    using Calculator.Helpers;
+    using MathExpressionParser;
+    using ProgramUpdater;
+
     public partial class MainForm : Form
     {
-        #region Constants
-
-        const int COMMAND_LENGTH = 24;
-        const int UPDATE_TIMER = 1000;
-
-        #endregion
-
-        #region Properties
-
-        // Boolean flag used to determine when a character other than a number is entered
-        bool NonNumberEntered { get; set; } = false;
-
-        // OutputBuffer list property
-        List<string> OutputBuffer { get; set; } = new List<string>();
-
-        // resultOutputLabel text
-        string ResultOutputLabelText
-        {
-            get { return resultOutputLabel.Text; }
-            set { resultOutputLabel.Text = value; }
-        }
-
-        // resultOutputLabel foreground color
-        Color ResultOutputLabelForeColor
-        {
-            set { resultOutputLabel.ForeColor = value; }
-        }
-
-        // memoryOutputLabel text
-        string MemoryOutputLabelText
-        {
-            get { return memoryOutputLabel.Text; }
-            set { memoryOutputLabel.Text = value; }
-        }
-
-        string DateTimeToolStripStatusLabelText
-        {
-            set { dateTimeToolStripStatusLabel.Text = value; }
-        }
-
-        // DateTime structure format string
-        string DateTimeStringFormat { get; }
-        bool OverrideDateTimeStringFormat { get; }
-
-        #endregion
-
-        #region AppSettings
-
-        static readonly List<string> _keys = new List<string>
-        {
-            "DateTimeStringFormat"
-        };
-
-        #endregion
-
-        #region Fields
+        private const int COMMANDLENGTH = 24;
+        private const int UPDATETIMERMS = 1000;
 
         // flag, that indicates, if calculation process completed successfully
-        bool _calcIsDone = false;
-
-        readonly CalculationEngine _ce = new CalculationEngine();
-
-        #endregion
+        private bool calculationIsDone = false;
 
         public MainForm()
         {
@@ -82,13 +26,46 @@ namespace Calculator
 
             if (AppSettings.AssemblyExist())
             {
-                if (AppSettings.KeyExist(_keys[0]))
+                if (AppSettings.KeyExist("DateTimeStringFormat"))
                 {
-                    DateTimeStringFormat = AppSettings.ReadKey(_keys[0]);
-                    OverrideDateTimeStringFormat = true;
+                    DateTimeStringFormat = AppSettings.ReadKey("DateTimeStringFormat");
                 }
             }
         }
+
+        // Boolean flag used to determine when a character other than a number is entered
+        private bool NonNumberEntered { get; set; } = false;
+
+        // OutputBuffer list property
+        private List<string> OutputBuffer { get; set; } = new List<string>();
+
+        // resultOutputLabel text
+        private string ResultOutputLabelText
+        {
+            get { return resultOutputLabel.Text; }
+            set { resultOutputLabel.Text = value; }
+        }
+
+        // resultOutputLabel foreground color
+        private Color ResultOutputLabelForeColor
+        {
+            set { resultOutputLabel.ForeColor = value; }
+        }
+
+        // memoryOutputLabel text
+        private string MemoryOutputLabelText
+        {
+            get { return memoryOutputLabel.Text; }
+            set { memoryOutputLabel.Text = value; }
+        }
+
+        private string DateTimeToolStripStatusLabelText
+        {
+            set { dateTimeToolStripStatusLabel.Text = value; }
+        }
+
+        // DateTime structure format string
+        private string? DateTimeStringFormat { get; }
 
         private void CalculatorForm_Load(object sender, EventArgs e)
         {
@@ -125,29 +102,28 @@ namespace Calculator
         {
             // date & time update timer
             dateTimeUpdateTimer.Tick += new EventHandler(UpdateDateTime);
-            dateTimeUpdateTimer.Interval = UPDATE_TIMER;
+            dateTimeUpdateTimer.Interval = UPDATETIMERMS;
             dateTimeUpdateTimer.Start();
         }
 
-        public async Task CheckUpdates()
+        private async Task CheckUpdates()
         {
             try
             {
-                var upd = new ProgramUpdater(Version.Parse(GitVersionInformation.SemVer),
-                                             AssemblyInfo.BaseDirectory,
-                                             AssemblyInfo.AppPath,
-                                             Guid.Parse(AssemblyInfo.AppGUID));
+                var updater = new Updater(
+                    AssemblyInfo.BaseDirectory,
+                    new Version(GitVersionInformation.SemVer),
+                    AssemblyInfo.AppGUID,
+                    AssemblyInfo.AppPath,
+                    AppSettings.ReadKey("AppVersionsJsonUrl"));
 
-                if (await upd.CheckUpdateIsAvailable())
+                if (await updater.CheckUpdateIsAvailable())
                 {
-                    var dr = MessageBox.Show($"Newer program version available.\n" +
-                        $"Current: {GitVersionInformation.SemVer}\n" +
-                        $"Available: {upd.ProgramVerServer}\n\nUpdate program?",
-                        "Program update required", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    var dr = MessageBox.Show(updater.UpdatePromptFormatted, "Program update required", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                     if (dr == DialogResult.Yes)
                     {
-                        await upd.Update();
+                        await updater.Update();
                         Close();
                         Dispose();
                         Program.ProgramExit((int)Program.ExitCode.Success);
@@ -235,7 +211,7 @@ namespace Calculator
         {
             var dateTimeNow = DateTime.Now;
 
-            if (!OverrideDateTimeStringFormat)
+            if (DateTimeStringFormat is null)
             {
                 DateTimeToolStripStatusLabelText = $"{dateTimeNow.ToLongDateString()} {dateTimeNow.ToLongTimeString()}";
             }
@@ -245,29 +221,12 @@ namespace Calculator
             }
         }
 
-        //protected override void OnLostFocus(EventArgs e)
-        //{
-        //    base.OnLostFocus(e);
-        //    Focus();
-        //}
-
-        //protected override void OnDeactivate(EventArgs e)
-        //{
-        //    base.OnDeactivate(e);
-        //    Focus();
-        //}
-
-        //private void CalculatorForm_Activated(object sender, EventArgs e)
-        //{
-        //    Focus();
-        //}
-
         private void AnalyzeButtonPressed(object sender, EventArgs e)
         {
             dummyLabel.Focus();
-            _calcIsDone = false;
+            calculationIsDone = false;
 
-            string button = (sender as Button).Text;
+            string button = ((Button)sender).Text;
 
             // special case, when 'Mod' button text needs to be converted to '%'
             if (button == "Mod")
@@ -275,7 +234,7 @@ namespace Calculator
                 button = "%";
             }
 
-            if (OutputBuffer.Count >= COMMAND_LENGTH)
+            if (OutputBuffer.Count >= COMMANDLENGTH)
             {
                 return;
             }
@@ -311,36 +270,36 @@ namespace Calculator
         {
             dummyLabel.Focus();
 
-            if (OutputBuffer.Count >= COMMAND_LENGTH || OutputBuffer.Count == 0)
+            if (OutputBuffer.Count >= COMMANDLENGTH || OutputBuffer.Count == 0)
             {
                 return;
             }
 
-            Calculate($"sqrt({string.Join("", OutputBuffer.ToArray())})");
+            Calculate($"sqrt{string.Join(string.Empty, OutputBuffer.ToArray())}");
         }
 
         private void CalculateOneDividedByX(object sender, EventArgs e)
         {
             dummyLabel.Focus();
 
-            if (OutputBuffer.Count >= COMMAND_LENGTH || OutputBuffer.Count == 0)
+            if (OutputBuffer.Count >= COMMANDLENGTH || OutputBuffer.Count == 0)
             {
                 return;
             }
 
-            Calculate($"1 / {string.Join("", OutputBuffer.ToArray())}");
+            Calculate($"1 / {string.Join(string.Empty, OutputBuffer.ToArray())}");
         }
 
         private void EqualsButton_Click(object sender, EventArgs e)
         {
             dummyLabel.Focus();
 
-            if (OutputBuffer.Count >= COMMAND_LENGTH || OutputBuffer.Count == 0 || _calcIsDone)
+            if (OutputBuffer.Count >= COMMANDLENGTH || OutputBuffer.Count == 0 || calculationIsDone)
             {
                 return;
             }
 
-            Calculate(string.Join("", OutputBuffer.ToArray()));
+            Calculate(string.Join(string.Empty, OutputBuffer.ToArray()));
         }
 
         private void Calculate(string command)
@@ -349,7 +308,17 @@ namespace Calculator
 
             try
             {
-                double result = _ce.Calculate(command);
+                double result;
+
+                if (command.Contains("sqrt"))
+                {
+                    double num = double.Parse(command.Replace("sqrt", string.Empty));
+                    result = Math.Sqrt(num);
+                }
+                else
+                {
+                    result = MathProcessor.Calculate(command);
+                }
 
                 previousCommandLabel.Text = $"{command} =";
                 OutputBuffer.Clear();
@@ -359,13 +328,13 @@ namespace Calculator
                 // split result double value to char array
                 char[] tmpChars = result.ToString().ToCharArray();
 
-                // put individul numbers to output buffer list
+                // put individual numbers to output buffer list
                 foreach (char ch in tmpChars)
                 {
                     OutputBuffer.Add(ch.ToString());
                 }
 
-                _calcIsDone = true;
+                calculationIsDone = true;
             }
             catch (Exception ex)
             {
@@ -403,8 +372,6 @@ namespace Calculator
 
         private void CalculatorForm_KeyDown(object sender, KeyEventArgs e)
         {
-            //_calcIsDone = false;
-
             // Initialize the flag to false.
             NonNumberEntered = false;
 
@@ -451,7 +418,11 @@ namespace Calculator
                             break;
 
                         case Keys.Return:
-                            if (!_calcIsDone) { Calculate(string.Join("", OutputBuffer.ToArray())); }
+                            if (!calculationIsDone)
+                            {
+                                Calculate(string.Join(string.Empty, OutputBuffer.ToArray()));
+                            }
+
                             break;
 
                         case Keys.Delete:
@@ -515,6 +486,7 @@ namespace Calculator
                     Clipboard.SetText(tmpStr);
                 }
             }
+
             // paste CTRL + V combination check
             else if (e.Control && e.KeyCode == Keys.V)
             {
@@ -525,16 +497,13 @@ namespace Calculator
                 }
 
                 // store resulting string length
-                int tmpStrLength = (doubleVal.ToString() + string.Join("", OutputBuffer)).Length;
+                int tmpStrLength = (doubleVal.ToString() + string.Join(string.Empty, OutputBuffer)).Length;
 
-                if (tmpStrLength > COMMAND_LENGTH)
+                if (tmpStrLength > COMMANDLENGTH)
                 {
                     MessageBox.Show("Cannot insert clipboard content to the output buffer.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
-
-                // experiment test
-                //ClearEntry();
 
                 OutputBuffer.Add(doubleVal.ToString());
                 ResultOutputLabelText = string.Empty;
@@ -559,7 +528,7 @@ namespace Calculator
             string button = e.KeyChar.ToString();
             ResultOutputLabelForeColor = Color.Black;
 
-            if (OutputBuffer.Count >= COMMAND_LENGTH)
+            if (OutputBuffer.Count >= COMMANDLENGTH)
             {
                 return;
             }
@@ -580,7 +549,7 @@ namespace Calculator
                 }
             }
 
-            _calcIsDone = false;
+            calculationIsDone = false;
 
             OutputBuffer.Add(button);
 
@@ -639,8 +608,6 @@ namespace Calculator
             MemoryStore();
         }
 
-        #region Memory related methods
-
         private void MemoryClear()
         {
             if (string.IsNullOrEmpty(MemoryOutputLabelText))
@@ -674,8 +641,6 @@ namespace Calculator
                 }
 
                 MemoryOutputLabelText = ResultOutputLabelText;
-
-                //MessageBox.Show(memoryBuffer, "memoryBuffer:", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             else
             {
@@ -701,10 +666,6 @@ namespace Calculator
                 }
             }
         }
-
-        #endregion
-
-        #region Click show forms events
 
         private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -760,10 +721,6 @@ namespace Calculator
         {
             ShowCurrencyConverterForm();
         }
-
-        #endregion
-
-        #region Show forms region
 
         private void ShowAboutForm()
         {
@@ -840,8 +797,6 @@ namespace Calculator
             var currencyConverterForm = new CurrencyConverterForm();
             currencyConverterForm.Show();
         }
-
-        #endregion
 
         private void TopmostToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
         {

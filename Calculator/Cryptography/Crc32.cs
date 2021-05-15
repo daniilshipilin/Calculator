@@ -3,13 +3,12 @@
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 // Originally published at http://damieng.com/blog/2006/08/08/calculating_crc32_in_c_and_net
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-
 namespace DamienG.Security.Cryptography
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Security.Cryptography;
+
     /// <summary>
     /// Implements a 32-bit CRC hash algorithm compatible with Zip etc.
     /// </summary>
@@ -22,24 +21,41 @@ namespace DamienG.Security.Cryptography
     /// </remarks>
     public sealed class Crc32 : HashAlgorithm
     {
-        public const UInt32 DefaultPolynomial = 0xedb88320u;
-        public const UInt32 DefaultSeed = 0xffffffffu;
+        public const uint DefaultPolynomial = 0xedb88320u;
+        public const uint DefaultSeed = 0xffffffffu;
 
-        static UInt32[] defaultTable;
+        private static uint[] defaultTable;
 
-        readonly UInt32 seed;
-        readonly UInt32[] table;
-        UInt32 hash;
+        private readonly uint seed;
+        private readonly uint[] table;
+        private uint hash;
 
         public Crc32()
         : this(DefaultPolynomial, DefaultSeed)
         {
         }
 
-        public Crc32(UInt32 polynomial, UInt32 seed)
+        public Crc32(uint polynomial, uint seed)
         {
             table = InitializeTable(polynomial);
             this.seed = hash = seed;
+        }
+
+        public override int HashSize => 32;
+
+        public static uint Compute(byte[] buffer)
+        {
+            return Compute(DefaultSeed, buffer);
+        }
+
+        public static uint Compute(uint seed, byte[] buffer)
+        {
+            return Compute(DefaultPolynomial, seed, buffer);
+        }
+
+        public static uint Compute(uint polynomial, uint seed, byte[] buffer)
+        {
+            return ~CalculateHash(InitializeTable(polynomial), seed, buffer, 0, buffer.Length);
         }
 
         public override void Initialize()
@@ -59,45 +75,30 @@ namespace DamienG.Security.Cryptography
             return hashBuffer;
         }
 
-        public override int HashSize { get { return 32; } }
-
-        public static UInt32 Compute(byte[] buffer)
-        {
-            return Compute(DefaultSeed, buffer);
-        }
-
-        public static UInt32 Compute(UInt32 seed, byte[] buffer)
-        {
-            return Compute(DefaultPolynomial, seed, buffer);
-        }
-
-        public static UInt32 Compute(UInt32 polynomial, UInt32 seed, byte[] buffer)
-        {
-            return ~CalculateHash(InitializeTable(polynomial), seed, buffer, 0, buffer.Length);
-        }
-
-        static UInt32[] InitializeTable(UInt32 polynomial)
+        private static uint[] InitializeTable(uint polynomial)
         {
             if (polynomial == DefaultPolynomial && defaultTable != null)
             {
                 return defaultTable;
             }
 
-            var createTable = new UInt32[256];
+            var createTable = new uint[256];
 
             for (var i = 0; i < 256; i++)
             {
-                var entry = (UInt32)i;
+                var entry = (uint)i;
 
                 for (var j = 0; j < 8; j++)
+                {
                     if ((entry & 1) == 1)
                     {
                         entry = (entry >> 1) ^ polynomial;
                     }
                     else
                     {
-                        entry = entry >> 1;
+                        entry >>= 1;
                     }
+                }
 
                 createTable[i] = entry;
             }
@@ -110,7 +111,7 @@ namespace DamienG.Security.Cryptography
             return createTable;
         }
 
-        static UInt32 CalculateHash(UInt32[] table, UInt32 seed, IList<byte> buffer, int start, int size)
+        private static uint CalculateHash(uint[] table, uint seed, IList<byte> buffer, int start, int size)
         {
             var hash = seed;
 
@@ -122,7 +123,7 @@ namespace DamienG.Security.Cryptography
             return hash;
         }
 
-        static byte[] UInt32ToBigEndianBytes(UInt32 uint32)
+        private static byte[] UInt32ToBigEndianBytes(uint uint32)
         {
             var result = BitConverter.GetBytes(uint32);
 

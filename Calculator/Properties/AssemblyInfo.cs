@@ -15,24 +15,28 @@ namespace Calculator
 {
     public static class AssemblyInfo
     {
-        static readonly Assembly _ass = Assembly.GetExecutingAssembly();
-        static readonly AssemblyTitleAttribute _title = _ass.GetCustomAttributes<AssemblyTitleAttribute>().FirstOrDefault();
-        static readonly AssemblyProductAttribute _product = _ass.GetCustomAttributes<AssemblyProductAttribute>().FirstOrDefault();
-        static readonly AssemblyDescriptionAttribute _description = _ass.GetCustomAttributes<AssemblyDescriptionAttribute>().FirstOrDefault();
-        static readonly AssemblyCopyrightAttribute _copyright = _ass.GetCustomAttributes<AssemblyCopyrightAttribute>().FirstOrDefault();
-        static readonly AssemblyTrademarkAttribute _trademark = _ass.GetCustomAttributes<AssemblyTrademarkAttribute>().FirstOrDefault();
-        static readonly GuidAttribute _guid = _ass.GetCustomAttributes<GuidAttribute>().FirstOrDefault();
+        private static readonly Assembly Ass = Assembly.GetExecutingAssembly();
+        private static readonly AssemblyTitleAttribute Title = Ass.GetCustomAttributes<AssemblyTitleAttribute>().FirstOrDefault();
+        private static readonly AssemblyDescriptionAttribute Description = Ass.GetCustomAttributes<AssemblyDescriptionAttribute>().FirstOrDefault();
+        private static readonly AssemblyCopyrightAttribute Copyright = Ass.GetCustomAttributes<AssemblyCopyrightAttribute>().FirstOrDefault();
+        private static readonly GuidAttribute GUID = Ass.GetCustomAttributes<GuidAttribute>().FirstOrDefault();
 
         public static string BaseDirectory { get; } = AppDomain.CurrentDomain.BaseDirectory;
-        public static string AppPath { get; } = _ass.Location;
-        public static string AppTitle { get; } = _title.Title;
-        public static string AppHeader { get; } = $"{_title.Title} v{GitVersionInformation.SemVer}";
-        public static string AppAuthor { get; } = _copyright.Copyright;
-        public static string AppDescription { get; } = _description.Description;
-        public static string AppGUID { get; } = _guid.Value;
+
+        public static string AppPath { get; } = Ass.Location;
+
+        public static string AppTitle { get; } = Title.Title;
+
+        public static string AppHeader { get; } = $"{Title.Title} v{GitVersionInformation.SemVer}";
+
+        public static string AppAuthor { get; } = Copyright.Copyright;
+
+        public static string AppDescription { get; } = Description.Description;
+
+        public static Guid AppGUID { get; } = new Guid(GUID.Value);
 
         /// <summary>
-        /// Formatted application info string.
+        /// Gets formatted application info string.
         /// </summary>
         public static string AppInfoFormatted { get; } =
             $"{AppHeader}{Environment.NewLine}" +

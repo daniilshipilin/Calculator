@@ -3,22 +3,34 @@
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 // Originally published at http://damieng.com/blog/2007/11/24/calculating-elf-32-in-c-and-net
 
-using System;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-
 namespace DamienG.Security.Cryptography
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Security.Cryptography;
+
     /// <summary>
     /// Implements a 32-bit ELF hash algorithm compatible with ELF binary format.
     /// </summary>
     public sealed class Elf32 : HashAlgorithm
     {
-        UInt32 hash;
+        private uint hash;
 
         public Elf32()
         {
             hash = 0;
+        }
+
+        public override int HashSize => 32;
+
+        public static uint Compute(byte[] buffer)
+        {
+            return CalculateHash(0, buffer, 0, buffer.Length);
+        }
+
+        public static uint Compute(uint seed, byte[] buffer)
+        {
+            return CalculateHash(seed, buffer, 0, buffer.Length);
         }
 
         public override void Initialize()
@@ -38,19 +50,7 @@ namespace DamienG.Security.Cryptography
             return hashBuffer;
         }
 
-        public override int HashSize { get { return 32; } }
-
-        public static UInt32 Compute(byte[] buffer)
-        {
-            return CalculateHash(0, buffer, 0, buffer.Length);
-        }
-
-        public static UInt32 Compute(UInt32 polynomial, UInt32 seed, byte[] buffer)
-        {
-            return CalculateHash(seed, buffer, 0, buffer.Length);
-        }
-
-        static UInt32 CalculateHash(UInt32 seed, IList<byte> buffer, int start, int size)
+        private static uint CalculateHash(uint seed, IList<byte> buffer, int start, int size)
         {
             var hash = seed;
 
@@ -65,7 +65,7 @@ namespace DamienG.Security.Cryptography
             return hash;
         }
 
-        static byte[] UInt32ToBigEndianBytes(UInt32 uint32)
+        private static byte[] UInt32ToBigEndianBytes(uint uint32)
         {
             var result = BitConverter.GetBytes(uint32);
 
