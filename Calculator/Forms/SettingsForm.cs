@@ -13,7 +13,7 @@ namespace Calculator
         private static readonly Dictionary<string, string> Settings = new Dictionary<string, string>
         {
             { "ConfigurationVer", "6" },
-            { "AppVersionsXmlUrl", string.Empty },
+            { "AppVersionsJsonUrl", string.Empty },
             { "HexDelimiter", "0x" },
             { "Base64Mode", "Text" },
             { "Crc32Checked", "True" },
