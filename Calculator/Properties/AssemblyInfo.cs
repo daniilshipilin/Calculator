@@ -6,8 +6,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Calculator")]
 [assembly: AssemblyDescription("A simple basic calculator.")]
 [assembly: AssemblyProduct("Calculator")]
-[assembly: AssemblyCopyright("Daniil Shipilin (daniil.shipilin@gmail.com)")]
-[assembly: AssemblyTrademark("Daniil Shipilin (daniil.shipilin@gmail.com)")]
+[assembly: AssemblyCopyright("Daniil Shipilin")]
+[assembly: AssemblyTrademark("Daniil Shipilin")]
 [assembly: Guid("cff8b2ce-eb3a-44f7-b5da-fb2e70efdbe6")]
 [assembly: ComVisible(true)]
 
