@@ -18,46 +18,34 @@ namespace DamienG.Security.Cryptography
 
         public Elf32()
         {
-            hash = 0;
+            this.hash = 0;
         }
 
         public override int HashSize => 32;
 
-        public static uint Compute(byte[] buffer)
-        {
-            return CalculateHash(0, buffer, 0, buffer.Length);
-        }
+        public static uint Compute(byte[] buffer) => CalculateHash(0, buffer, 0, buffer.Length);
 
-        public static uint Compute(uint seed, byte[] buffer)
-        {
-            return CalculateHash(seed, buffer, 0, buffer.Length);
-        }
+        public static uint Compute(uint seed, byte[] buffer) => CalculateHash(seed, buffer, 0, buffer.Length);
 
-        public override void Initialize()
-        {
-            hash = 0;
-        }
+        public override void Initialize() => this.hash = 0;
 
-        protected override void HashCore(byte[] array, int ibStart, int cbSize)
-        {
-            hash = CalculateHash(hash, array, ibStart, cbSize);
-        }
+        protected override void HashCore(byte[] array, int ibStart, int cbSize) => this.hash = CalculateHash(this.hash, array, ibStart, cbSize);
 
         protected override byte[] HashFinal()
         {
-            var hashBuffer = UInt32ToBigEndianBytes(hash);
-            HashValue = hashBuffer;
+            byte[]? hashBuffer = UInt32ToBigEndianBytes(this.hash);
+            this.HashValue = hashBuffer;
             return hashBuffer;
         }
 
         private static uint CalculateHash(uint seed, IList<byte> buffer, int start, int size)
         {
-            var hash = seed;
+            uint hash = seed;
 
-            for (var i = start; i < start + size; i++)
+            for (int i = start; i < start + size; i++)
             {
                 hash = (hash << 4) + buffer[i];
-                var work = hash & 0xf0000000u;
+                uint work = hash & 0xf0000000u;
                 hash ^= work >> 24;
                 hash &= ~work;
             }
@@ -67,7 +55,7 @@ namespace DamienG.Security.Cryptography
 
         private static byte[] UInt32ToBigEndianBytes(uint uint32)
         {
-            var result = BitConverter.GetBytes(uint32);
+            byte[]? result = BitConverter.GetBytes(uint32);
 
             if (BitConverter.IsLittleEndian)
             {

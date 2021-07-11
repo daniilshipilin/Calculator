@@ -1,81 +1,209 @@
 namespace Calculator.Helpers
 {
     using System;
-    using System.Configuration;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using Microsoft.Win32;
 
     public static class AppSettings
     {
-        public static bool AssemblyExist()
+        public const string RegistryBaseKey = @"SOFTWARE\Illuminati Software Inc.";
+
+        public const string RegistryCalculatorKey =
+#if DEBUG
+            RegistryBaseKey + "\\Calculator [Debug]";
+#else
+            RegistryBaseKey + "\\Calculator";
+#endif
+
+        public const int CurrentConfigVersion = 8;
+
+        private static readonly RegistryKey RegKeyCalculator = Registry.CurrentUser.CreateSubKey(RegistryCalculatorKey);
+
+        private static readonly IReadOnlyDictionary<string, object> DefaultSettingsDict = new Dictionary<string, object>()
         {
-            return File.Exists(Assembly.GetEntryAssembly().Location + ".config");
+            { nameof(ConfigVersion), CurrentConfigVersion },
+            { nameof(UpdatesLastCheckedTimestamp), default(DateTime).ToString("s") },
+            { nameof(TopMost), false },
+            { nameof(HexDelimiter), "0x" },
+            { nameof(Base64Mode), "Text" },
+            { nameof(Crc32Checked), true },
+            { nameof(Elf32Checked), true },
+            { nameof(Md5Checked), true },
+            { nameof(Sha1Checked), true },
+            { nameof(Sha256Checked), true },
+            { nameof(Sha384Checked), true },
+            { nameof(Sha512Checked), true },
+            { nameof(RandomQty), 1000 },
+            { nameof(RandomMin), -1000000 },
+            { nameof(RandomMax), 1000000 },
+            { nameof(DateTimeStringFormat), "dddd dd MMMM yyyy HH:mm:ss zzz" },
+            { nameof(PasswordQty), 10 },
+            { nameof(PasswordLength), 16 },
+            { nameof(PasswordCharset), "MIXALPHA_NUMERIC_SYMBOL14" },
+        };
+
+        public static int? ConfigVersion
+        {
+            get => (int?)RegKeyCalculator.GetValue(nameof(ConfigVersion));
+
+            set => RegKeyCalculator.SetValue(nameof(ConfigVersion), value ?? 0);
         }
 
-        public static void ReadAllKeys()
+        public static DateTime UpdatesLastCheckedTimestamp
         {
-            try
+            get => DateTime.ParseExact((string?)RegKeyCalculator.GetValue(nameof(UpdatesLastCheckedTimestamp)) ?? string.Empty, "s", CultureInfo.InvariantCulture);
+
+            private set => RegKeyCalculator.SetValue(nameof(UpdatesLastCheckedTimestamp), value.ToString("s", CultureInfo.InvariantCulture));
+        }
+
+        public static bool TopMost
+        {
+            get => bool.Parse((string?)RegKeyCalculator.GetValue(nameof(TopMost)) ?? string.Empty);
+
+            set => RegKeyCalculator.SetValue(nameof(TopMost), value);
+        }
+
+        public static string HexDelimiter
+        {
+            get => (string?)RegKeyCalculator.GetValue(nameof(HexDelimiter)) ?? string.Empty;
+
+            set => RegKeyCalculator.SetValue(nameof(HexDelimiter), value);
+        }
+
+        public static string Base64Mode
+        {
+            get => (string?)RegKeyCalculator.GetValue(nameof(Base64Mode)) ?? string.Empty;
+
+            set => RegKeyCalculator.SetValue(nameof(Base64Mode), value);
+        }
+
+        public static bool Crc32Checked
+        {
+            get => bool.Parse((string?)RegKeyCalculator.GetValue(nameof(Crc32Checked)) ?? string.Empty);
+
+            set => RegKeyCalculator.SetValue(nameof(Crc32Checked), value);
+        }
+
+        public static bool Elf32Checked
+        {
+            get => bool.Parse((string?)RegKeyCalculator.GetValue(nameof(Elf32Checked)) ?? string.Empty);
+
+            set => RegKeyCalculator.SetValue(nameof(Elf32Checked), value);
+        }
+
+        public static bool Md5Checked
+        {
+            get => bool.Parse((string?)RegKeyCalculator.GetValue(nameof(Md5Checked)) ?? string.Empty);
+
+            set => RegKeyCalculator.SetValue(nameof(Md5Checked), value);
+        }
+
+        public static bool Sha1Checked
+        {
+            get => bool.Parse((string?)RegKeyCalculator.GetValue(nameof(Sha1Checked)) ?? string.Empty);
+
+            set => RegKeyCalculator.SetValue(nameof(Sha1Checked), value);
+        }
+
+        public static bool Sha256Checked
+        {
+            get => bool.Parse((string?)RegKeyCalculator.GetValue(nameof(Sha256Checked)) ?? string.Empty);
+
+            set => RegKeyCalculator.SetValue(nameof(Sha256Checked), value);
+        }
+
+        public static bool Sha384Checked
+        {
+            get => bool.Parse((string?)RegKeyCalculator.GetValue(nameof(Sha384Checked)) ?? string.Empty);
+
+            set => RegKeyCalculator.SetValue(nameof(Sha384Checked), value);
+        }
+
+        public static bool Sha512Checked
+        {
+            get => bool.Parse((string?)RegKeyCalculator.GetValue(nameof(Sha512Checked)) ?? string.Empty);
+
+            set => RegKeyCalculator.SetValue(nameof(Sha512Checked), value);
+        }
+
+        public static int RandomQty
+        {
+            get => (int?)RegKeyCalculator.GetValue(nameof(RandomQty)) ?? 0;
+
+            set => RegKeyCalculator.SetValue(nameof(RandomQty), value);
+        }
+
+        public static int RandomMin
+        {
+            get => (int?)RegKeyCalculator.GetValue(nameof(RandomMin)) ?? 0;
+
+            set => RegKeyCalculator.SetValue(nameof(RandomMin), value);
+        }
+
+        public static int RandomMax
+        {
+            get => (int?)RegKeyCalculator.GetValue(nameof(RandomMax)) ?? 0;
+
+            set => RegKeyCalculator.SetValue(nameof(RandomMax), value);
+        }
+
+        public static string DateTimeStringFormat
+        {
+            get => (string?)RegKeyCalculator.GetValue(nameof(DateTimeStringFormat)) ?? string.Empty;
+
+            set => RegKeyCalculator.SetValue(nameof(DateTimeStringFormat), value);
+        }
+
+        public static int PasswordQty
+        {
+            get => (int?)RegKeyCalculator.GetValue(nameof(PasswordQty)) ?? 0;
+
+            set => RegKeyCalculator.SetValue(nameof(PasswordQty), value);
+        }
+
+        public static int PasswordLength
+        {
+            get => (int?)RegKeyCalculator.GetValue(nameof(PasswordLength)) ?? 0;
+
+            set => RegKeyCalculator.SetValue(nameof(PasswordLength), value);
+        }
+
+        public static string PasswordCharset
+        {
+            get => (string?)RegKeyCalculator.GetValue(nameof(PasswordCharset)) ?? string.Empty;
+
+            set => RegKeyCalculator.SetValue(nameof(PasswordCharset), value);
+        }
+
+        public static void UpdateUpdatesLastCheckedTimestamp() => UpdatesLastCheckedTimestamp = DateTime.Now;
+
+        public static void CheckSettings()
+        {
+            if (ConfigVersion is null or not CurrentConfigVersion)
             {
-                var appSettings = ConfigurationManager.AppSettings;
-
-                if (appSettings.Count == 0)
-                {
-                    Console.WriteLine("AppSettings are empty.");
-                }
-                else
-                {
-                    foreach (var key in appSettings.AllKeys)
-                    {
-                        Console.WriteLine("Key: {0} Value: {1}", key, appSettings[key]);
-                    }
-                }
+                ResetSettings();
             }
-            catch (ConfigurationErrorsException)
+        }
+
+        public static void ResetSettings()
+        {
+            // clear root config reg keys
+            ClearRegistryKey(RegKeyCalculator);
+
+            // set default values
+            foreach (var pair in DefaultSettingsDict)
             {
-                Console.WriteLine("Error reading App settings");
+                RegKeyCalculator.SetValue(pair.Key, pair.Value);
             }
         }
 
-        public static string ReadKey(string key)
+        private static void ClearRegistryKey(RegistryKey regKey)
         {
-            var appSettings = ConfigurationManager.AppSettings;
-
-            return appSettings[key] ?? throw new ConfigurationErrorsException();
-        }
-
-        public static bool KeyExist(string key)
-        {
-            return ConfigurationManager.AppSettings.AllKeys.Contains(key);
-        }
-
-        public static void UpdateKey(string key, string value)
-        {
-            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            config.AppSettings.Settings[key].Value = value;
-            config.Save(ConfigurationSaveMode.Modified);
-            RefreshAppSettings();
-        }
-
-        public static void AddKey(string key, string value)
-        {
-            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            config.AppSettings.Settings.Add(key, value);
-            config.Save(ConfigurationSaveMode.Modified);
-            RefreshAppSettings();
-        }
-
-        public static void DeleteKey(string key)
-        {
-            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            config.AppSettings.Settings.Remove(key);
-            config.Save(ConfigurationSaveMode.Modified);
-            RefreshAppSettings();
-        }
-
-        public static void RefreshAppSettings()
-        {
-            ConfigurationManager.RefreshSection("appSettings");
+            foreach (string? key in regKey.GetValueNames())
+            {
+                regKey.DeleteValue(key);
+            }
         }
     }
 }

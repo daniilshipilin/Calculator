@@ -1,88 +1,58 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
-using Calculator.Helpers;
-
 namespace Calculator
 {
+    using System;
+    using System.Text;
+    using System.Windows.Forms;
+    using Calculator.Helpers;
+
     public partial class HexToAsciiConverterForm : Form
     {
-        #region Public properties
-
-        // hexTextBox text
         public string HexTextBoxText
         {
-            get { return (hexTextBox.Text); }
-            set { hexTextBox.Text = value; }
+            get => this.hexTextBox.Text;
+
+            set => this.hexTextBox.Text = value;
         }
 
-        // asciiTextBox text
         public string AsciiTextBoxText
         {
-            get { return (asciiTextBox.Text); }
-            set { asciiTextBox.Text = value; }
+            get => this.asciiTextBox.Text;
+
+            set => this.asciiTextBox.Text = value;
         }
 
-        // asciiTextBox text
         public string HexDelimiterTextBoxText
         {
-            get { return (hexDelimiterTextBox.Text); }
-            set { hexDelimiterTextBox.Text = value; }
+            get => this.hexDelimiterTextBox.Text;
+
+            set => this.hexDelimiterTextBox.Text = value;
         }
-
-        #endregion
-
-        #region AppSettings
-
-        static readonly List<string> _keys = new List<string>
-        {
-            "HexDelimiter"
-        };
-
-        #endregion
-
-        #region Private fields
-
-        // flag to activate settings update
-        bool _settingsUpdateEnabled = false;
-
-        #endregion
 
         public HexToAsciiConverterForm()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         private void HexToAsciiConverterForm_Load(object sender, EventArgs e)
         {
-            HexDelimiterTextBoxText = string.Empty;
+            this.HexDelimiterTextBoxText = string.Empty;
 
-            // configuration check
-            if (AppSettings.AssemblyExist())
-            {
-                if (AppSettings.KeyExist(_keys[0]))
-                {
-                    HexDelimiterTextBoxText = AppSettings.ReadKey(_keys[0]);
-                }
-            }
+            this.HexDelimiterTextBoxText = AppSettings.HexDelimiter;
 
-            _settingsUpdateEnabled = true;
-
-            TopMost = Program.GlobalTopMost;
+            this.TopMost = AppSettings.TopMost;
         }
 
         private void HexToAsciiConverterForm_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
             {
-                Close();
+                this.Close();
             }
         }
 
         private void ConvertToAsciiButton_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(HexTextBoxText))
+            if (string.IsNullOrEmpty(this.HexTextBoxText))
             {
                 MessageBox.Show($"HEX textbox is empty!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
@@ -91,7 +61,7 @@ namespace Calculator
 
             try
             {
-                AsciiTextBoxText = ConvertHexToAsciiString(HexTextBoxText, HexDelimiterTextBoxText);
+                this.AsciiTextBoxText = ConvertHexToAsciiString(this.HexTextBoxText, this.HexDelimiterTextBoxText);
             }
             catch (Exception ex)
             {
@@ -101,7 +71,7 @@ namespace Calculator
 
         private void ConvertToHexButton_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(AsciiTextBoxText))
+            if (string.IsNullOrEmpty(this.AsciiTextBoxText))
             {
                 MessageBox.Show($"ASCII textbox is empty!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
@@ -110,7 +80,7 @@ namespace Calculator
 
             try
             {
-                HexTextBoxText = ConvertAsciiToHexString(AsciiTextBoxText, HexDelimiterTextBoxText);
+                this.HexTextBoxText = ConvertAsciiToHexString(this.AsciiTextBoxText, this.HexDelimiterTextBoxText);
             }
             catch (Exception ex)
             {
@@ -118,22 +88,19 @@ namespace Calculator
             }
         }
 
-        private void ClearButton_Click(object sender, EventArgs e)
-        {
-            ClearTextBoxes();
-        }
+        private void ClearButton_Click(object sender, EventArgs e) => this.ClearTextBoxes();
 
         private void ClearTextBoxes()
         {
-            HexTextBoxText = string.Empty;
-            AsciiTextBoxText = string.Empty;
+            this.HexTextBoxText = string.Empty;
+            this.AsciiTextBoxText = string.Empty;
         }
 
         private void HexTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Control & e.KeyCode == Keys.A)
             {
-                hexTextBox.SelectAll();
+                this.hexTextBox.SelectAll();
             }
         }
 
@@ -141,13 +108,11 @@ namespace Calculator
         {
             if (e.Control & e.KeyCode == Keys.A)
             {
-                asciiTextBox.SelectAll();
+                this.asciiTextBox.SelectAll();
             }
         }
 
-        #region HEX & ASCII convert methods
-
-        private string ConvertHexToAsciiString(string hexString, string delimiter)
+        private static string ConvertHexToAsciiString(string hexString, string delimiter)
         {
             var sb = new StringBuilder();
 
@@ -165,13 +130,13 @@ namespace Calculator
 
                 char curChar = Convert.ToChar(Convert.ToUInt32(hexStr, 16));
 
-                sb.Append(AsciiTable.AsciiCodesStripped[(int)curChar]);
+                sb.Append(AsciiTable.AsciiCodesStripped[curChar]);
             }
 
-            return (sb.ToString());
+            return sb.ToString();
         }
 
-        private string ConvertAsciiToHexString(string asciiString, string delimiter)
+        private static string ConvertAsciiToHexString(string asciiString, string delimiter)
         {
             var sb = new StringBuilder();
 
@@ -180,32 +145,9 @@ namespace Calculator
                 sb.AppendFormat("{0}{1:X2} ", delimiter, (int)c);
             }
 
-            return (sb.ToString().Trim());
+            return sb.ToString().Trim();
         }
 
-        #endregion
-
-        private void HexDelimiterTextBox_TextChanged(object sender, EventArgs e)
-        {
-            if (_settingsUpdateEnabled)
-            {
-                UpdateSettings(_keys[0]);
-            }
-        }
-
-        private void UpdateSettings(string key)
-        {
-            // update settings
-            if (AppSettings.AssemblyExist())
-            {
-                if (AppSettings.KeyExist(key))
-                {
-                    if (HexDelimiterTextBoxText != AppSettings.ReadKey(_keys[0]))
-                    {
-                        AppSettings.UpdateKey(key, HexDelimiterTextBoxText);
-                    }
-                }
-            }
-        }
+        private void HexDelimiterTextBox_TextChanged(object sender, EventArgs e) => AppSettings.HexDelimiter = this.HexDelimiterTextBoxText;
     }
 }

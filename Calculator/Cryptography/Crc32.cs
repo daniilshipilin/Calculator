@@ -24,7 +24,7 @@ namespace DamienG.Security.Cryptography
         public const uint DefaultPolynomial = 0xedb88320u;
         public const uint DefaultSeed = 0xffffffffu;
 
-        private static uint[] defaultTable;
+        private static uint[]? defaultTable;
 
         private readonly uint seed;
         private readonly uint[] table;
@@ -37,41 +37,26 @@ namespace DamienG.Security.Cryptography
 
         public Crc32(uint polynomial, uint seed)
         {
-            table = InitializeTable(polynomial);
-            this.seed = hash = seed;
+            this.table = InitializeTable(polynomial);
+            this.seed = this.hash = seed;
         }
 
         public override int HashSize => 32;
 
-        public static uint Compute(byte[] buffer)
-        {
-            return Compute(DefaultSeed, buffer);
-        }
+        public static uint Compute(byte[] buffer) => Compute(DefaultSeed, buffer);
 
-        public static uint Compute(uint seed, byte[] buffer)
-        {
-            return Compute(DefaultPolynomial, seed, buffer);
-        }
+        public static uint Compute(uint seed, byte[] buffer) => Compute(DefaultPolynomial, seed, buffer);
 
-        public static uint Compute(uint polynomial, uint seed, byte[] buffer)
-        {
-            return ~CalculateHash(InitializeTable(polynomial), seed, buffer, 0, buffer.Length);
-        }
+        public static uint Compute(uint polynomial, uint seed, byte[] buffer) => ~CalculateHash(InitializeTable(polynomial), seed, buffer, 0, buffer.Length);
 
-        public override void Initialize()
-        {
-            hash = seed;
-        }
+        public override void Initialize() => this.hash = this.seed;
 
-        protected override void HashCore(byte[] array, int ibStart, int cbSize)
-        {
-            hash = CalculateHash(table, hash, array, ibStart, cbSize);
-        }
+        protected override void HashCore(byte[] array, int ibStart, int cbSize) => this.hash = CalculateHash(this.table, this.hash, array, ibStart, cbSize);
 
         protected override byte[] HashFinal()
         {
-            var hashBuffer = UInt32ToBigEndianBytes(~hash);
-            HashValue = hashBuffer;
+            byte[]? hashBuffer = UInt32ToBigEndianBytes(~this.hash);
+            this.HashValue = hashBuffer;
             return hashBuffer;
         }
 
@@ -82,13 +67,13 @@ namespace DamienG.Security.Cryptography
                 return defaultTable;
             }
 
-            var createTable = new uint[256];
+            uint[]? createTable = new uint[256];
 
-            for (var i = 0; i < 256; i++)
+            for (int i = 0; i < 256; i++)
             {
-                var entry = (uint)i;
+                uint entry = (uint)i;
 
-                for (var j = 0; j < 8; j++)
+                for (int j = 0; j < 8; j++)
                 {
                     if ((entry & 1) == 1)
                     {
@@ -113,11 +98,11 @@ namespace DamienG.Security.Cryptography
 
         private static uint CalculateHash(uint[] table, uint seed, IList<byte> buffer, int start, int size)
         {
-            var hash = seed;
+            uint hash = seed;
 
-            for (var i = start; i < start + size; i++)
+            for (int i = start; i < start + size; i++)
             {
-                hash = (hash >> 8) ^ table[buffer[i] ^ hash & 0xff];
+                hash = (hash >> 8) ^ table[buffer[i] ^ (hash & 0xff)];
             }
 
             return hash;
@@ -125,7 +110,7 @@ namespace DamienG.Security.Cryptography
 
         private static byte[] UInt32ToBigEndianBytes(uint uint32)
         {
-            var result = BitConverter.GetBytes(uint32);
+            byte[]? result = BitConverter.GetBytes(uint32);
 
             if (BitConverter.IsLittleEndian)
             {

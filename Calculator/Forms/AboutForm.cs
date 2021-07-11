@@ -1,27 +1,28 @@
-using System;
-using System.Windows.Forms;
-
 namespace Calculator
 {
+    using System;
+    using System.Windows.Forms;
+    using Calculator.Helpers;
+
     public partial class AboutForm : Form
     {
         public AboutForm()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         private void AboutForm_Load(object sender, EventArgs e)
         {
-            aboutTextBox.Text = Program.GetInfo();
+            this.aboutTextBox.Text = ApplicationInfo.AppInfoExtendedFormatted;
 
-            TopMost = Program.GlobalTopMost;
+            this.TopMost = AppSettings.TopMost;
         }
 
         private void AboutForm_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
             {
-                Close();
+                this.Close();
             }
         }
     }

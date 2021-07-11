@@ -1,18 +1,19 @@
-using System;
-using System.Windows.Forms;
-
 namespace Calculator
 {
+    using System;
+    using System.Windows.Forms;
+    using Calculator.Helpers;
+
     public partial class ClockForm : Form
     {
-        string TimeLabelText
+        private string TimeLabelText
         {
-            set { timeLabel.Text = value; }
+            set => this.timeLabel.Text = value;
         }
 
-        string DateLabelText
+        private string DateLabelText
         {
-            set { dateLabel.Text = value; }
+            set => this.dateLabel.Text = value;
         }
 
         //Color TimeLabelForeColor
@@ -55,12 +56,12 @@ namespace Calculator
 
         public ClockForm()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         private void ClockForm_Load(object sender, EventArgs e)
         {
-            TopMost = Program.GlobalTopMost;
+            this.TopMost = AppSettings.TopMost;
 
             //GetAllColors();
 
@@ -75,13 +76,13 @@ namespace Calculator
             //TimeLabelForeColor = DateTimeLabelColor;
             //DateLabelForeColor = DateTimeLabelColor;
 
-            TimeLabelText = string.Empty;
-            DateLabelText = string.Empty;
+            this.TimeLabelText = string.Empty;
+            this.DateLabelText = string.Empty;
 
             // date & time update timer
-            dateTimeUpdateTimer.Tick += new EventHandler(UpdateDateTime);
-            dateTimeUpdateTimer.Interval = 1000;
-            dateTimeUpdateTimer.Start();
+            this.dateTimeUpdateTimer.Tick += this.UpdateDateTime;
+            this.dateTimeUpdateTimer.Interval = 1000;
+            this.dateTimeUpdateTimer.Start();
 
             // color update timer
             //argbValUpdateTimer.Tick += new EventHandler(UpdateArgbVal);
@@ -101,12 +102,12 @@ namespace Calculator
         //    DateLabelForeColor = DateTimeLabelColor;
         //}
 
-        private void UpdateDateTime(object sender, EventArgs e)
+        private void UpdateDateTime(object? sender, EventArgs e)
         {
             var dateTimeNow = DateTime.Now;
-            TimeLabelText = dateTimeNow.ToLongTimeString();
-            DateLabelText = dateTimeNow.ToLongDateString();
-            toolStripProgressBar.Value = (int)((dateTimeNow.TimeOfDay.TotalSeconds / 86400) * 100);
+            this.TimeLabelText = dateTimeNow.ToLongTimeString();
+            this.DateLabelText = dateTimeNow.ToLongDateString();
+            this.toolStripProgressBar.Value = (int)(dateTimeNow.TimeOfDay.TotalSeconds / 86400 * 100);
         }
 
         //private void GetAllColors()
@@ -126,7 +127,7 @@ namespace Calculator
         {
             if (e.KeyCode == Keys.Escape)
             {
-                Close();
+                this.Close();
             }
         }
     }

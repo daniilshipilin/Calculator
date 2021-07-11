@@ -1,42 +1,42 @@
-using System;
-using System.Windows.Forms;
-using Calculator.Helpers;
-
 namespace Calculator
 {
+    using System;
+    using System.Windows.Forms;
+    using Calculator.Helpers;
+
     public partial class AsciiTableForm : Form
     {
-        #region Public properties
-
         public string AsciiTextBoxText
         {
-            get { return (asciiTextBox.Text); }
-            set { asciiTextBox.Text = value; }
+            get => this.asciiTextBox.Text;
+
+            set => this.asciiTextBox.Text = value;
         }
 
         public string ExtendedAsciiTextBoxText
         {
-            get { return (extendedAsciiTextBox.Text); }
-            set { extendedAsciiTextBox.Text = value; }
+            get => this.extendedAsciiTextBox.Text;
+
+            set => this.extendedAsciiTextBox.Text = value;
         }
 
         public string AsciiHeaderTextBoxText
         {
-            get { return (asciiHeaderTextBox.Text); }
-            set { asciiHeaderTextBox.Text = value; }
+            get => this.asciiHeaderTextBox.Text;
+
+            set => this.asciiHeaderTextBox.Text = value;
         }
 
         public string ExtendedAsciiHeaderTextBoxText
         {
-            get { return (extendedAsciiHeaderTextBox.Text); }
-            set { extendedAsciiHeaderTextBox.Text = value; }
-        }
+            get => this.extendedAsciiHeaderTextBox.Text;
 
-        #endregion
+            set => this.extendedAsciiHeaderTextBox.Text = value;
+        }
 
         public AsciiTableForm()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         private void AsciiTableForm_Load(object sender, EventArgs e)
@@ -65,19 +65,19 @@ namespace Calculator
                 }
             }
 
-            AsciiHeaderTextBoxText = "DEC\tHEX\tCHAR";
-            ExtendedAsciiHeaderTextBoxText = "DEC\tHEX\tCHAR";
-            AsciiTextBoxText = ascii;
-            ExtendedAsciiTextBoxText = extended;
+            this.AsciiHeaderTextBoxText = "DEC\tHEX\tCHAR";
+            this.ExtendedAsciiHeaderTextBoxText = "DEC\tHEX\tCHAR";
+            this.AsciiTextBoxText = ascii;
+            this.ExtendedAsciiTextBoxText = extended;
 
-            TopMost = Program.GlobalTopMost;
+            this.TopMost = AppSettings.TopMost;
         }
 
         private void AsciiTableForm_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
             {
-                Close();
+                this.Close();
             }
         }
     }

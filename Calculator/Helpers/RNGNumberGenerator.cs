@@ -1,11 +1,11 @@
-using System;
-using System.Security.Cryptography;
-
 namespace Calculator.Helpers
 {
+    using System;
+    using System.Security.Cryptography;
+
     public class RNGNumberGenerator : INumberGenerator
     {
-        protected static readonly RNGCryptoServiceProvider _rng = new RNGCryptoServiceProvider();
+        protected static readonly RNGCryptoServiceProvider _rng = new();
 
         /// <summary>
         /// Returns a non-negative random integer.
@@ -23,10 +23,7 @@ namespace Calculator.Helpers
         /// Returns a non-negative random integer that is less than the specified maximum.
         /// Method uses RNGCryptoServiceProvider class.
         /// </summary>
-        public int GetInt32(int maxVal)
-        {
-            return GetInt32(0, maxVal);
-        }
+        public int GetInt32(int maxVal) => this.GetInt32(0, maxVal);
 
         /// <summary>
         /// Returns a random integer that is within a specified range.
@@ -36,10 +33,13 @@ namespace Calculator.Helpers
         {
             if (minVal > maxVal)
             {
-                throw new ArgumentOutOfRangeException($"'{nameof(minVal)}' is greater than '{nameof(maxVal)}'");
+                throw new ArgumentOutOfRangeException(nameof(minVal));
             }
 
-            if (minVal == maxVal) { return minVal; }
+            if (minVal == maxVal)
+            {
+                return minVal;
+            }
 
             byte[] bytes = new byte[sizeof(int)];
             _rng.GetBytes(bytes);
@@ -54,9 +54,6 @@ namespace Calculator.Helpers
         /// Fills the elements of a specified array of bytes with random numbers.
         /// Method uses RNGCryptoServiceProvider class.
         /// </summary>
-        public void FillBytes(byte[] bytes)
-        {
-            _rng.GetBytes(bytes);
-        }
+        public void FillBytes(byte[] bytes) => _rng.GetBytes(bytes);
     }
 }

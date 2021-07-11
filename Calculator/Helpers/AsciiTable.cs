@@ -1,11 +1,13 @@
-using System.Collections.Generic;
-
 namespace Calculator.Helpers
 {
-    public class AsciiTable
+    using System.Collections.Generic;
+
+    public static class AsciiTable
     {
-        // ASCII Table
-        public static List<string> AsciiCodes = new List<string>
+        /// <summary>
+        /// ASCII Table.
+        /// </summary>
+        public static IReadOnlyList<string> AsciiCodes { get; } = new List<string>
         {
             "NUL (null)",
             "SOH (start of header)",
@@ -265,8 +267,10 @@ namespace Calculator.Helpers
             "ÿ"
         };
 
-        // ASCII Table stripped
-        public static List<string> AsciiCodesStripped = new List<string>
+        /// <summary>
+        /// ASCII Table stripped.
+        /// </summary>
+        public static IReadOnlyList<string> AsciiCodesStripped { get; } = new List<string>
         {
             "[NUL]",
             "[SOH]",

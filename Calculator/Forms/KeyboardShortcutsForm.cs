@@ -1,27 +1,28 @@
-using System;
-using System.Windows.Forms;
-
 namespace Calculator
 {
+    using System;
+    using System.Windows.Forms;
+    using Calculator.Helpers;
+
     public partial class KeyboardShortcutsForm : Form
     {
         public KeyboardShortcutsForm()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         private void KeyboardShortcutsForm_Load(object sender, EventArgs e)
         {
-            keyboardShortcutsTextBox.Text = Program.GetShortcuts();
+            this.keyboardShortcutsTextBox.Text = ApplicationInfo.ShortcutsFormatted;
 
-            TopMost = Program.GlobalTopMost;
+            this.TopMost = AppSettings.TopMost;
         }
 
         private void KeyboardShortcutsForm_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
             {
-                Close();
+                this.Close();
             }
         }
     }

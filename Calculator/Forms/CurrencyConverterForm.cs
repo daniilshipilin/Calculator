@@ -1,193 +1,188 @@
-using System;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Calculator.Forms;
-using Calculator.Helpers;
-
 namespace Calculator
 {
+    using System;
+    using System.Text;
+    using System.Threading.Tasks;
+    using System.Windows.Forms;
+    using Calculator.Forms;
+    using Calculator.Helpers;
+
     public partial class CurrencyConverterForm : Form
     {
         public CurrencyConverterForm()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         private void CurrencyConverterForm_Load(object sender, EventArgs e)
         {
-            TopMost = Program.GlobalTopMost;
-            UpdateCurrenciesComboBoxes();
-            UpdateCurrenciesRatesTextBoxes();
-            statusLabel.Text = string.Empty;
+            this.TopMost = AppSettings.TopMost;
+            this.UpdateCurrenciesComboBoxes();
+            this.UpdateCurrenciesRatesTextBoxes();
+            this.statusLabel.Text = string.Empty;
         }
 
         private void CurrencyConverterForm_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
             {
-                Close();
+                this.Close();
             }
         }
 
-        #region Click events
-
-        private async void ConvertButton_Click(object sender, EventArgs e)
-        {
-            await ConvertCurrency();
-        }
+        private async void ConvertButton_Click(object sender, EventArgs e) => await this.ConvertCurrency();
 
         private void SwitchButton_Click(object sender, EventArgs e)
         {
-            string tmpCurrencyFrom = currencyFromComboBox.SelectedItem.ToString();
-            currencyFromComboBox.Text = currencyToComboBox.SelectedItem.ToString();
-            currencyToComboBox.Text = tmpCurrencyFrom;
+            string? tmpCurrencyFrom = this.currencyFromComboBox.SelectedItem.ToString();
+            this.currencyFromComboBox.Text = this.currencyToComboBox.SelectedItem.ToString();
+            this.currencyToComboBox.Text = tmpCurrencyFrom;
 
             CurrencyConverter.SwapAmounts();
 
-            amountFromTextBox.Text = CurrencyConverter.AmountFrom.ToString();
-            amountToTextBox.Text = CurrencyConverter.AmountTo.ToString();
+            this.amountFromTextBox.Text = CurrencyConverter.AmountFrom.ToString();
+            this.amountToTextBox.Text = CurrencyConverter.AmountTo.ToString();
         }
 
         private async void GetRatesButton_Click(object sender, EventArgs e)
         {
-            DisableButtons();
+            this.DisableButtons();
 
             try
             {
-                await UpdateCurrencyRates();
-                updateCheckBox.Checked = false;
+                await this.UpdateCurrencyRates();
+                this.updateCheckBox.Checked = false;
             }
             catch (Exception ex)
             {
-                statusLabel.Text = "Error";
+                this.statusLabel.Text = "Error";
                 MessageBox.Show($"{ex.Message}", "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
-                EnableButtons();
+                this.EnableButtons();
             }
         }
-
-        #endregion
 
         private void UpdateCurrenciesComboBoxes()
         {
             // default currencies to look for, if there are no selected items
-            string currencyFrom = "EUR";
-            string currencyTo = "GBP";
+            string? currencyFrom = "EUR";
+            string? currencyTo = "GBP";
 
             // checking whether currencies comboboxes have any selected items
-            if (currencyFromComboBox.SelectedIndex != -1 && currencyToComboBox.SelectedIndex != -1)
+            if (this.currencyFromComboBox.SelectedIndex != -1 && this.currencyToComboBox.SelectedIndex != -1)
             {
-                currencyFrom = currencyFromComboBox.SelectedItem.ToString();
-                currencyTo = currencyToComboBox.SelectedItem.ToString();
+                currencyFrom = this.currencyFromComboBox.SelectedItem.ToString();
+                currencyTo = this.currencyToComboBox.SelectedItem.ToString();
             }
 
             // bind currencies list with currencies combobox
-            currencyFromComboBox.DataSource = new BindingSource { DataSource = CurrencyConverter.Currencies.Rates.Keys };
-            currencyToComboBox.DataSource = new BindingSource { DataSource = CurrencyConverter.Currencies.Rates.Keys };
+            this.currencyFromComboBox.DataSource = new BindingSource { DataSource = CurrencyConverter.Currencies.Rates.Keys };
+            this.currencyToComboBox.DataSource = new BindingSource { DataSource = CurrencyConverter.Currencies.Rates.Keys };
 
             // select previously selected item, because of index reset after data source update
-            currencyFromComboBox.SelectedIndex = currencyFromComboBox.Items.IndexOf(currencyFrom);
-            currencyToComboBox.SelectedIndex = currencyToComboBox.Items.IndexOf(currencyTo);
+            this.currencyFromComboBox.SelectedIndex = this.currencyFromComboBox.Items.IndexOf(currencyFrom);
+            this.currencyToComboBox.SelectedIndex = this.currencyToComboBox.Items.IndexOf(currencyTo);
         }
 
         private void UpdateCurrenciesRatesTextBoxes()
         {
-            if (currencyFromComboBox.SelectedItem != null && currencyToComboBox.SelectedItem != null)
-            {
-                CurrencyConverter.CalculateConversionRateTo(currencyFromComboBox.SelectedItem.ToString(), currencyToComboBox.SelectedItem.ToString());
-            }
-
-            rateToTextBox.Text = CurrencyConverter.RateTo.ToString();
-        }
-
-        private async Task UpdateCurrencyRates()
-        {
-            statusLabel.Text = "Updating currency rates";
-
-            await CurrencyConverter.UpdateCurrenciesAsync();
-
-            UpdateCurrenciesComboBoxes();
-
-            UpdateCurrenciesRatesTextBoxes();
-
-            baseCurrencyTextBox.Text = CurrencyConverter.Currencies.Base;
-
-            dateStampTextBox.Text = CurrencyConverter.Currencies.TimestampLocalDateTime.ToString();
-
-            statusLabel.Text = "Currency rates updated";
-        }
-
-        private void CurrencyFromComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            UpdateCurrenciesRatesTextBoxes();
-        }
-
-        private void CurrencyToComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            UpdateCurrenciesRatesTextBoxes();
-        }
-
-        private async void AmountFromTextBox_TextChanged(object sender, EventArgs e)
-        {
-            if (!autoConvertCheckBox.Checked)
+            if (this.currencyFromComboBox.SelectedItem is null || this.currencyToComboBox.SelectedItem is null)
             {
                 return;
             }
 
-            await ConvertCurrency();
+            string? currencyFrom = this.currencyFromComboBox.SelectedItem.ToString();
+            string? currencyTo = this.currencyToComboBox.SelectedItem.ToString();
+
+            if (!string.IsNullOrEmpty(currencyFrom) && !string.IsNullOrEmpty(currencyTo))
+            {
+                CurrencyConverter.CalculateConversionRateTo(currencyFrom, currencyTo);
+            }
+
+            this.rateToTextBox.Text = CurrencyConverter.RateTo.ToString();
+        }
+
+        private async Task UpdateCurrencyRates()
+        {
+            this.statusLabel.Text = "Updating currency rates";
+
+            await CurrencyConverter.UpdateCurrenciesAsync();
+
+            this.UpdateCurrenciesComboBoxes();
+
+            this.UpdateCurrenciesRatesTextBoxes();
+
+            this.baseCurrencyTextBox.Text = CurrencyConverter.Currencies.Base;
+
+            this.dateStampTextBox.Text = CurrencyConverter.Currencies.TimestampLocalDateTime.ToString();
+
+            this.statusLabel.Text = "Currency rates updated";
+        }
+
+        private void CurrencyFromComboBox_SelectedIndexChanged(object sender, EventArgs e) => this.UpdateCurrenciesRatesTextBoxes();
+
+        private void CurrencyToComboBox_SelectedIndexChanged(object sender, EventArgs e) => this.UpdateCurrenciesRatesTextBoxes();
+
+        private async void AmountFromTextBox_TextChanged(object sender, EventArgs e)
+        {
+            if (!this.autoConvertCheckBox.Checked)
+            {
+                return;
+            }
+
+            await this.ConvertCurrency();
         }
 
         private async Task ConvertCurrency()
         {
-            if (string.IsNullOrEmpty(amountFromTextBox.Text))
+            if (string.IsNullOrEmpty(this.amountFromTextBox.Text))
             {
-                statusLabel.Text = "Amount textbox empty";
+                this.statusLabel.Text = "Amount textbox empty";
             }
             else
             {
-                DisableButtons();
-                statusLabel.Text = "Converting";
+                this.DisableButtons();
+                this.statusLabel.Text = "Converting";
 
                 try
                 {
                     // make new http request only, if previous request generated error or this is the first request
-                    if (updateCheckBox.Checked)
+                    if (this.updateCheckBox.Checked)
                     {
-                        await UpdateCurrencyRates();
-                        updateCheckBox.Checked = false;
+                        await this.UpdateCurrencyRates();
+                        this.updateCheckBox.Checked = false;
                     }
 
-                    CurrencyConverter.ConvertCurrency(decimal.Parse(amountFromTextBox.Text));
+                    CurrencyConverter.ConvertCurrency(decimal.Parse(this.amountFromTextBox.Text));
 
-                    amountToTextBox.Text = CurrencyConverter.AmountTo.ToString();
+                    this.amountToTextBox.Text = CurrencyConverter.AmountTo.ToString();
 
-                    statusLabel.Text = "Converted";
+                    this.statusLabel.Text = "Converted";
                 }
                 catch (Exception ex)
                 {
-                    statusLabel.Text = "Error";
+                    this.statusLabel.Text = "Error";
                     MessageBox.Show($"{ex.Message}", "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 finally
                 {
-                    EnableButtons();
+                    this.EnableButtons();
                 }
             }
         }
 
         private void EnableButtons()
         {
-            getRatesButton.Enabled = true;
-            convertButton.Enabled = true;
+            this.getRatesButton.Enabled = true;
+            this.convertButton.Enabled = true;
         }
 
         private void DisableButtons()
         {
-            getRatesButton.Enabled = false;
-            convertButton.Enabled = false;
+            this.getRatesButton.Enabled = false;
+            this.convertButton.Enabled = false;
         }
 
         private void RateToTextBox_Click(object sender, EventArgs e)

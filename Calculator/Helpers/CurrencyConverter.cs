@@ -1,21 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using Calculator.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-
 namespace Calculator.Helpers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
+    using System.Threading.Tasks;
+    using Calculator.Models;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Serialization;
+
     public static class CurrencyConverter
     {
-        const string API_BASE_URL = "http://data.fixer.io/api/";
-        const string API_LATEST = "latest?access_key=f864890aa3760d6e4a3bdd0a33e655be&base=EUR";
-
-        static readonly HttpClient _httpClient = new HttpClient();
-        static bool _httpClientIsInitialized;
+        private const string API_BASE_URL = "http://data.fixer.io/api/";
+        private const string API_LATEST = "latest?access_key=f864890aa3760d6e4a3bdd0a33e655be&base=EUR";
+        private static readonly HttpClient _httpClient = new();
+        private static bool _httpClientIsInitialized;
 
         public static decimal RateTo { get; private set; }
         public static decimal AmountFrom { get; private set; }
@@ -56,7 +55,7 @@ namespace Calculator.Helpers
                 var errors = new List<string>();
                 var settings = new JsonSerializerSettings()
                 {
-                    Error = delegate (object sender, ErrorEventArgs args)
+                    Error = delegate (object? sender, ErrorEventArgs args)
                     {
                         // put registered errors in created string list
                         errors.Add(args.ErrorContext.Error.Message);
@@ -89,10 +88,7 @@ namespace Calculator.Helpers
             }
         }
 
-        public static void CalculateConversionRateTo(string currencyFrom, string currencyTo)
-        {
-            RateTo = Currencies.Rates[Currencies.Base] / Currencies.Rates[currencyFrom] * Currencies.Rates[currencyTo];
-        }
+        public static void CalculateConversionRateTo(string currencyFrom, string currencyTo) => RateTo = Currencies.Rates[Currencies.Base] / Currencies.Rates[currencyFrom] * Currencies.Rates[currencyTo];
 
         public static void ConvertCurrency(decimal amountFrom) => (AmountFrom, AmountTo) = (amountFrom, amountFrom * RateTo);
 

@@ -54,8 +54,6 @@ namespace Calculator
             this.exponentiationButton = new System.Windows.Forms.Button();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.readSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.settingsToolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.topmostToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.numberBaseConverterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -391,25 +389,11 @@ namespace Calculator
             //
             this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[]
             {
-                this.readSettingsToolStripMenuItem,
-                this.settingsToolStripSeparator,
                 this.topmostToolStripMenuItem
             });
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(75, 19);
-            this.settingsToolStripMenuItem.Text = "&Settings";
-            //
-            // readSettingsToolStripMenuItem
-            //
-            this.readSettingsToolStripMenuItem.Name = "readSettingsToolStripMenuItem";
-            this.readSettingsToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
-            this.readSettingsToolStripMenuItem.Text = "&Read Settings";
-            this.readSettingsToolStripMenuItem.Click += new System.EventHandler(this.SettingsToolStripMenuItem_Click);
-            //
-            // settingsToolStripSeparator
-            //
-            this.settingsToolStripSeparator.Name = "settingsToolStripSeparator";
-            this.settingsToolStripSeparator.Size = new System.Drawing.Size(162, 6);
+            this.settingsToolStripMenuItem.Text = "&Settings";            
             //
             // topmostToolStripMenuItem
             //
@@ -824,9 +808,7 @@ namespace Calculator
         private System.Windows.Forms.ToolStripMenuItem asciiTableToolStripMenuItem;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel dateTimeToolStripStatusLabel;
-        private System.Windows.Forms.ToolStripMenuItem readSettingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem topmostToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator settingsToolStripSeparator;
         private System.Windows.Forms.ToolStripSeparator helpToolStripSeparator;
         private System.Windows.Forms.Timer dateTimeUpdateTimer;
         private System.Windows.Forms.Timer funnyTimer;

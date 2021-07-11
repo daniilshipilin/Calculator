@@ -1,8 +1,8 @@
-using System;
-using System.Collections.Generic;
-
 namespace Calculator.Models
 {
+    using System;
+    using System.Collections.Generic;
+
     // fixer.io api description:
     // "latest" endpoint - request the most recent exchange rate data.
     // url example:
@@ -46,7 +46,7 @@ namespace Calculator.Models
         /// <summary>
         /// Returns the three-letter currency code of the base currency used for this request.
         /// </summary>
-        public string Base { get; set; }
+        public string Base { get; set; } = string.Empty;
 
         /// <summary>
         /// The date the given exchange rate data was collected.
@@ -56,25 +56,27 @@ namespace Calculator.Models
         /// <summary>
         /// Returns exchange rate data for the currencies you have requested.
         /// </summary>
-        public Dictionary<string, decimal> Rates { get; set; }
+        public Dictionary<string, decimal> Rates { get; set; } = new();
 
         /// <summary>
         /// Whenever a requested resource is not available or an API call fails for another reason, a JSON error is returned.
         /// </summary>
-        public APIError Error { get; set; }
+        public APIError? Error { get; set; }
 
         /// <summary>
         /// Returns timestamp as local DateTime (converts from Unix timestamp).
         /// </summary>
-        public DateTime TimestampLocalDateTime => new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddSeconds(Timestamp).ToLocalTime();
+        public DateTime TimestampLocalDateTime => new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddSeconds(this.Timestamp).ToLocalTime();
     }
 
     public class APIError
     {
         public int Code { get; set; }
-        public string Type { get; set; }
-        public string Info { get; set; }
 
-        public override string ToString() => $"{Code}{Environment.NewLine}{Type}{Environment.NewLine}{Info}";
+        public string Type { get; set; } = string.Empty;
+
+        public string Info { get; set; } = string.Empty;
+
+        public override string ToString() => $"{this.Code}{Environment.NewLine}{this.Type}{Environment.NewLine}{this.Info}";
     }
 }
