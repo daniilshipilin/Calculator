@@ -215,12 +215,12 @@ namespace Calculator
 
             try
             {
-                double result;
+                decimal result;
 
                 if (command.Contains("sqrt"))
                 {
-                    double num = double.Parse(command.Replace("sqrt", string.Empty));
-                    result = Math.Sqrt(num);
+                    decimal num = decimal.Parse(command.Replace("sqrt", string.Empty));
+                    result = (decimal)Math.Sqrt((double)num);
                 }
                 else
                 {
@@ -232,7 +232,7 @@ namespace Calculator
                 this.ResultOutputLabelForeColor = Color.DarkBlue;
                 this.ResultOutputLabelText = result.ToString();
 
-                // split result double value to char array
+                // split result value to char array
                 char[] tmpChars = result.ToString().ToCharArray();
 
                 // put individual numbers to output buffer list
@@ -386,21 +386,28 @@ namespace Calculator
 
                 if (!string.IsNullOrEmpty(tmpStr))
                 {
-                    Clipboard.SetText(tmpStr);
+                    Clipboard.SetDataObject(tmpStr);
                 }
             }
 
             // paste CTRL + V combination check
             else if (e.Control && e.KeyCode == Keys.V)
             {
-                if (!double.TryParse(Clipboard.GetText(), out double doubleVal))
+                var iData = Clipboard.GetDataObject();
+
+                if (!iData.GetDataPresent(DataFormats.Text))
                 {
-                    MessageBox.Show("Cannot convert clipboard text to double-precision floating-point number.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (!decimal.TryParse((string)Clipboard.GetDataObject().GetData(DataFormats.Text), out decimal parsedValue))
+                {
+                    MessageBox.Show("Cannot convert clipboard text to number.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
                 // store resulting string length
-                int tmpStrLength = (doubleVal.ToString() + string.Join(string.Empty, this.OutputBuffer)).Length;
+                int tmpStrLength = (parsedValue.ToString() + string.Join(string.Empty, this.OutputBuffer)).Length;
 
                 if (tmpStrLength > COMMANDLENGTH)
                 {
@@ -408,7 +415,7 @@ namespace Calculator
                     return;
                 }
 
-                this.OutputBuffer.Add(doubleVal.ToString());
+                this.OutputBuffer.Add(parsedValue.ToString());
                 this.ResultOutputLabelText = string.Empty;
 
                 foreach (string? cmd in this.OutputBuffer)
@@ -528,7 +535,7 @@ namespace Calculator
         {
             if (string.IsNullOrEmpty(this.MemoryOutputLabelText))
             {
-                if (double.TryParse(this.ResultOutputLabelText, out double tmp))
+                if (decimal.TryParse(this.ResultOutputLabelText, out decimal tmp))
                 {
                     if (tmp == 0)
                     {
@@ -541,7 +548,7 @@ namespace Calculator
                 }
                 else
                 {
-                    MessageBox.Show("Cannot convert to double-precision floating-point number.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Cannot convert to number.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
 
                 this.MemoryOutputLabelText = this.ResultOutputLabelText;
