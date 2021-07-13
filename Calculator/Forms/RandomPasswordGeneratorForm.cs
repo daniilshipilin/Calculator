@@ -1,6 +1,7 @@
 namespace Calculator
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
@@ -27,6 +28,29 @@ namespace Calculator
         private const string MIXALPHA_NUMERIC = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         private const string MIXALPHA_NUMERIC_SYMBOL14 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_+=";
         private const string MIXALPHA_NUMERIC_ALL = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_+=~`[]{}|\\:;\"'<>,.?/ ";
+        private const string PASSWORD_CHARSET = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ123456789!@#$%^&*()-_+=";
+
+        private static readonly IReadOnlyList<string> Charset = new List<string>
+        {
+            nameof(NUMERIC),
+            nameof(SYMBOLS14),
+            nameof(SYMBOLS_ALL),
+            nameof(HEX_LOWER),
+            nameof(HEX_UPPER),
+            nameof(UALPHA),
+            nameof(UALPHA_NUMERIC),
+            nameof(UALPHA_NUMERIC_SYMBOL14),
+            nameof(UALPHA_NUMERIC_ALL),
+            nameof(LALPHA),
+            nameof(LALPHA_NUMERIC),
+            nameof(LALPHA_NUMERIC_SYMBOL14),
+            nameof(LALPHA_NUMERIC_ALL),
+            nameof(MIXALPHA),
+            nameof(MIXALPHA_NUMERIC),
+            nameof(MIXALPHA_NUMERIC_SYMBOL14),
+            nameof(MIXALPHA_NUMERIC_ALL),
+            nameof(PASSWORD_CHARSET),
+        };
 
         private string QtyTextBoxText
         {
@@ -88,13 +112,18 @@ namespace Calculator
 
         private void RandomPasswordGeneratorForm_Load(object sender, EventArgs e)
         {
+            this.TopMost = AppSettings.TopMost;
             this.saveToFileButton.Enabled = false;
 
             this.QtyTextBoxText = AppSettings.PasswordQty.ToString();
             this.PasswordLengthTextBoxText = AppSettings.PasswordLength.ToString();
-            this.CharsetSelectComboBoxText = AppSettings.PasswordCharset.ToString();
 
-            this.TopMost = AppSettings.TopMost;
+            foreach (string item in Charset)
+            {
+                this.charsetSelectComboBox.Items.Add(item);
+            }
+
+            this.CharsetSelectComboBoxText = AppSettings.PasswordCharset.ToString();
         }
 
         private void RandomPasswordGeneratorForm_KeyDown(object sender, KeyEventArgs e)
@@ -262,71 +291,75 @@ namespace Calculator
         {
             AppSettings.PasswordCharset = this.CharsetSelectComboBoxText;
 
-            if (this.CharsetSelectComboBoxText == "HEX_LOWER")
+            if (this.CharsetSelectComboBoxText == nameof(PASSWORD_CHARSET))
+            {
+                this.CharsetCharsTextBoxText = PASSWORD_CHARSET;
+            }
+            else if (this.CharsetSelectComboBoxText == nameof(HEX_LOWER))
             {
                 this.CharsetCharsTextBoxText = HEX_LOWER;
             }
-            else if (this.CharsetSelectComboBoxText == "HEX_UPPER")
+            else if (this.CharsetSelectComboBoxText == nameof(HEX_UPPER))
             {
                 this.CharsetCharsTextBoxText = HEX_UPPER;
             }
-            else if (this.CharsetSelectComboBoxText == "LALPHA")
+            else if (this.CharsetSelectComboBoxText == nameof(LALPHA))
             {
                 this.CharsetCharsTextBoxText = LALPHA;
             }
-            else if (this.CharsetSelectComboBoxText == "LALPHA_NUMERIC")
+            else if (this.CharsetSelectComboBoxText == nameof(LALPHA_NUMERIC))
             {
                 this.CharsetCharsTextBoxText = LALPHA_NUMERIC;
             }
-            else if (this.CharsetSelectComboBoxText == "LALPHA_NUMERIC_ALL")
+            else if (this.CharsetSelectComboBoxText == nameof(LALPHA_NUMERIC_ALL))
             {
                 this.CharsetCharsTextBoxText = LALPHA_NUMERIC_ALL;
             }
-            else if (this.CharsetSelectComboBoxText == "LALPHA_NUMERIC_SYMBOL14")
+            else if (this.CharsetSelectComboBoxText == nameof(LALPHA_NUMERIC_SYMBOL14))
             {
                 this.CharsetCharsTextBoxText = LALPHA_NUMERIC_SYMBOL14;
             }
-            else if (this.CharsetSelectComboBoxText == "MIXALPHA")
+            else if (this.CharsetSelectComboBoxText == nameof(MIXALPHA))
             {
                 this.CharsetCharsTextBoxText = MIXALPHA;
             }
-            else if (this.CharsetSelectComboBoxText == "MIXALPHA_NUMERIC")
+            else if (this.CharsetSelectComboBoxText == nameof(MIXALPHA_NUMERIC))
             {
                 this.CharsetCharsTextBoxText = MIXALPHA_NUMERIC;
             }
-            else if (this.CharsetSelectComboBoxText == "MIXALPHA_NUMERIC_ALL")
+            else if (this.CharsetSelectComboBoxText == nameof(MIXALPHA_NUMERIC_ALL))
             {
                 this.CharsetCharsTextBoxText = MIXALPHA_NUMERIC_ALL;
             }
-            else if (this.CharsetSelectComboBoxText == "MIXALPHA_NUMERIC_SYMBOL14")
+            else if (this.CharsetSelectComboBoxText == nameof(MIXALPHA_NUMERIC_SYMBOL14))
             {
                 this.CharsetCharsTextBoxText = MIXALPHA_NUMERIC_SYMBOL14;
             }
-            else if (this.CharsetSelectComboBoxText == "NUMERIC")
+            else if (this.CharsetSelectComboBoxText == nameof(NUMERIC))
             {
                 this.CharsetCharsTextBoxText = NUMERIC;
             }
-            else if (this.CharsetSelectComboBoxText == "SYMBOLS14")
+            else if (this.CharsetSelectComboBoxText == nameof(SYMBOLS14))
             {
                 this.CharsetCharsTextBoxText = SYMBOLS14;
             }
-            else if (this.CharsetSelectComboBoxText == "SYMBOLS_ALL")
+            else if (this.CharsetSelectComboBoxText == nameof(SYMBOLS_ALL))
             {
                 this.CharsetCharsTextBoxText = SYMBOLS_ALL;
             }
-            else if (this.CharsetSelectComboBoxText == "UALPHA")
+            else if (this.CharsetSelectComboBoxText == nameof(UALPHA))
             {
                 this.CharsetCharsTextBoxText = UALPHA;
             }
-            else if (this.CharsetSelectComboBoxText == "UALPHA_NUMERIC")
+            else if (this.CharsetSelectComboBoxText == nameof(UALPHA_NUMERIC))
             {
                 this.CharsetCharsTextBoxText = UALPHA_NUMERIC;
             }
-            else if (this.CharsetSelectComboBoxText == "UALPHA_NUMERIC_ALL")
+            else if (this.CharsetSelectComboBoxText == nameof(UALPHA_NUMERIC_ALL))
             {
                 this.CharsetCharsTextBoxText = UALPHA_NUMERIC_ALL;
             }
-            else if (this.CharsetSelectComboBoxText == "UALPHA_NUMERIC_SYMBOL14")
+            else if (this.CharsetSelectComboBoxText == nameof(UALPHA_NUMERIC_SYMBOL14))
             {
                 this.CharsetCharsTextBoxText = UALPHA_NUMERIC_SYMBOL14;
             }

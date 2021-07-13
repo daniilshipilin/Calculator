@@ -76,27 +76,7 @@ namespace Calculator
             this.charsetSelectComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.charsetSelectComboBox.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.charsetSelectComboBox.ForeColor = System.Drawing.Color.Black;
-            this.charsetSelectComboBox.FormattingEnabled = true;
-            this.charsetSelectComboBox.Items.AddRange(new object[]
-            {
-                "NUMERIC",
-                "SYMBOLS14",
-                "SYMBOLS_ALL",
-                "HEX_LOWER",
-                "HEX_UPPER",
-                "LALPHA",
-                "LALPHA_NUMERIC",
-                "LALPHA_NUMERIC_ALL",
-                "LALPHA_NUMERIC_SYMBOL14",
-                "UALPHA",
-                "UALPHA_NUMERIC",
-                "UALPHA_NUMERIC_ALL",
-                "UALPHA_NUMERIC_SYMBOL14",
-                "MIXALPHA",
-                "MIXALPHA_NUMERIC",
-                "MIXALPHA_NUMERIC_ALL",
-                "MIXALPHA_NUMERIC_SYMBOL14"
-            });
+            this.charsetSelectComboBox.FormattingEnabled = true;            
             this.charsetSelectComboBox.Location = new System.Drawing.Point(268, 11);
             this.charsetSelectComboBox.Margin = new System.Windows.Forms.Padding(5);
             this.charsetSelectComboBox.Name = "charsetSelectComboBox";

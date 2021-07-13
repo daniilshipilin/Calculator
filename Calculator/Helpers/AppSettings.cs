@@ -40,7 +40,7 @@ namespace Calculator.Helpers
             { nameof(DateTimeStringFormat), "dddd dd MMMM yyyy HH:mm:ss zzz" },
             { nameof(PasswordQty), 10 },
             { nameof(PasswordLength), 16 },
-            { nameof(PasswordCharset), "MIXALPHA_NUMERIC_SYMBOL14" },
+            { nameof(PasswordCharset), "PASSWORD_CHARSET" },
         };
 
         public static int? ConfigVersion
