@@ -16,7 +16,7 @@ namespace Calculator.Helpers
             RegistryBaseKey + "\\Calculator";
 #endif
 
-        public const int CurrentConfigVersion = 8;
+        public const int CurrentConfigVersion = 9;
 
         private static readonly RegistryKey RegKeyCalculator = Registry.CurrentUser.CreateSubKey(RegistryCalculatorKey);
 
@@ -25,6 +25,7 @@ namespace Calculator.Helpers
             { nameof(ConfigVersion), CurrentConfigVersion },
             { nameof(UpdatesLastCheckedTimestamp), default(DateTime).ToString("s") },
             { nameof(TopMost), false },
+            { nameof(CurrencyConverterApiKey), "" },
             { nameof(HexDelimiter), "0x" },
             { nameof(Base64Mode), "Text" },
             { nameof(Crc32Checked), true },
@@ -62,6 +63,13 @@ namespace Calculator.Helpers
             get => bool.Parse((string?)RegKeyCalculator.GetValue(nameof(TopMost)) ?? string.Empty);
 
             set => RegKeyCalculator.SetValue(nameof(TopMost), value);
+        }
+
+        public static string CurrencyConverterApiKey
+        {
+            get => (string?)RegKeyCalculator.GetValue(nameof(CurrencyConverterApiKey)) ?? string.Empty;
+
+            set => RegKeyCalculator.SetValue(nameof(CurrencyConverterApiKey), value);
         }
 
         public static string HexDelimiter

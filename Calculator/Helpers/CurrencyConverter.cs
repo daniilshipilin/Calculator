@@ -11,14 +11,18 @@ namespace Calculator.Helpers
 
     public static class CurrencyConverter
     {
-        private const string API_BASE_URL = "http://data.fixer.io/api/";
-        private const string API_LATEST = "latest?access_key=f864890aa3760d6e4a3bdd0a33e655be&base=EUR";
-        private static readonly HttpClient _httpClient = new();
-        private static bool _httpClientIsInitialized;
+        private static readonly HttpClient Client = new()
+        {
+            BaseAddress = new Uri("http://data.fixer.io/api/"),
+            Timeout = new TimeSpan(0, 0, 60),
+        };
 
         public static decimal RateTo { get; private set; }
+
         public static decimal AmountFrom { get; private set; }
+
         public static decimal AmountTo { get; private set; }
+
         public static CurrencyApiJson Currencies { get; private set; } = new CurrencyApiJson()
         {
             // initial/default json model values
@@ -28,23 +32,14 @@ namespace Calculator.Helpers
             Rates = new Dictionary<string, decimal> { { "EUR", 1.0M }, { "GBP", 0.900756M }, { "USD", 1.1245M } }
         };
 
-        private static void InitializeHttpClient()
-        {
-            _httpClient.BaseAddress = new Uri(API_BASE_URL);
-            _httpClient.Timeout = new TimeSpan(0, 0, 5);
-            _httpClient.DefaultRequestHeaders.Accept.Clear();
-            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            _httpClientIsInitialized = true;
-        }
-
         public static async Task UpdateCurrenciesAsync()
         {
-            if (!_httpClientIsInitialized)
+            if (string.IsNullOrEmpty(AppSettings.CurrencyConverterApiKey))
             {
-                InitializeHttpClient();
+                throw new ArgumentNullException(nameof(AppSettings.CurrencyConverterApiKey));
             }
 
-            using var response = await _httpClient.GetAsync(API_LATEST);
+            using var response = await Client.GetAsync($"latest?access_key={AppSettings.CurrencyConverterApiKey}");
 
             if (response.IsSuccessStatusCode)
             {
