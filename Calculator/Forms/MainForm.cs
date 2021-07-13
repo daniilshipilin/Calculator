@@ -20,6 +20,8 @@ namespace Calculator
 
         private string dateTimeStringFormat = string.Empty;
 
+        private IUpdater? updater;
+
         public MainForm()
         {
             this.InitializeComponent();
@@ -65,6 +67,12 @@ namespace Calculator
             this.dateTimeStringFormat = AppSettings.DateTimeStringFormat;
             this.SetTooltips();
             this.InitTimers();
+
+            // init program updater
+            this.InitUpdater();
+
+            // check for updates in the background
+            Task.Run(async () => await this.CheckUpdates());
         }
 
         private void SetTooltips()
@@ -94,35 +102,75 @@ namespace Calculator
             this.dateTimeUpdateTimer.Start();
         }
 
-        private static async Task CheckUpdates()
+        private void InitUpdater()
         {
             try
             {
-                IUpdater updater = new Updater(
+                this.updater = new Updater(
                     ApplicationInfo.BaseDirectory,
                     Version.Parse(GitVersionInformation.SemVer),
                     ApplicationInfo.AppGUID,
                     ApplicationInfo.ExePath);
-
-                if (await updater.CheckUpdateIsAvailable())
-                {
-                    var dr = MessageBox.Show(updater.UpdatePromptFormatted, "Program update required", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                    if (dr == DialogResult.Yes)
-                    {
-                        await updater.Update();
-                        Program.ProgramExit();
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Program is up to date", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"{ex.Message}", "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ShowExceptionMessage(ex);
             }
+        }
+
+        private async Task CheckUpdates(bool forceCheck = false)
+        {
+            if (this.updater is null)
+            {
+                return;
+            }
+
+            if (forceCheck || (DateTime.UtcNow - AppSettings.UpdatesLastCheckedTimestamp).Days >= 1)
+            {
+                try
+                {
+                    AppSettings.UpdateUpdatesLastCheckedTimestamp();
+
+                    if (await this.updater.CheckUpdateIsAvailable())
+                    {
+                        var dr = MessageBox.Show(
+                            new Form { TopMost = true },
+                            this.updater.UpdatePromptFormatted,
+                            "Program update required",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Question);
+
+                        if (dr == DialogResult.Yes)
+                        {
+                            await this.updater.Update();
+                            Program.ProgramExit();
+                        }
+                    }
+
+                    if (forceCheck)
+                    {
+                        MessageBox.Show(
+                            "Program is up to date",
+                            "Information",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ShowExceptionMessage(ex);
+                }
+            }
+        }
+
+        private static void ShowExceptionMessage(Exception ex)
+        {
+            MessageBox.Show(
+                new Form { TopMost = true },
+                ex.Message,
+                ex.GetType().ToString(),
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
         }
 
         private void UpdateDateTime(object? sender, EventArgs e) => this.DateTimeToolStripStatusLabelText = DateTime.Now.ToString(this.dateTimeStringFormat);
@@ -245,9 +293,7 @@ namespace Calculator
             }
             catch (Exception ex)
             {
-                this.ResultOutputLabelForeColor = Color.DarkRed;
-                this.ResultOutputLabelText = "EXCEPTION";
-                MessageBox.Show($"{ex.Message}", "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ShowExceptionMessage(ex);
                 this.ClearEntry();
             }
         }
@@ -672,6 +718,6 @@ namespace Calculator
             AppSettings.TopMost = val;
         }
 
-        private async void UpdatesMenuItem_Click(object sender, EventArgs e) => await CheckUpdates();
+        private async void UpdatesMenuItem_Click(object sender, EventArgs e) => await this.CheckUpdates(true);
     }
 }
