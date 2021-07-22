@@ -61,7 +61,8 @@ namespace Calculator
             $"  • Hex to Ascii text converter;{Environment.NewLine}" +
             $"  • Random number & random image generator;{Environment.NewLine}" +
             $"  • Random password generator;{Environment.NewLine}" +
-            $"  • Currency converter.{Environment.NewLine}";
+            $"  • Currency converter;{Environment.NewLine}" +
+            $"  • Fuelcost calculator.{Environment.NewLine}";
 
         public static string ShortcutsFormatted =>
             $"The following table contains common keyboard shortcuts (accessible from the main menu):{Environment.NewLine}" +
@@ -73,6 +74,7 @@ namespace Calculator
             $"  'G' - Random number generator;{Environment.NewLine}" +
             $"  'P' - Random password generator;{Environment.NewLine}" +
             $"  'R' - Currency converter;{Environment.NewLine}" +
+            $"  'F' - Fuelcost calculator;{Environment.NewLine}" +
             $"  'C' - Digital clock;{Environment.NewLine}" +
             $"  'ESCAPE' - close current menu.";
 

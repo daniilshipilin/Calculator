@@ -366,6 +366,10 @@ namespace Calculator
                             ShowCurrencyConverterForm();
                             break;
 
+                        case Keys.F:
+                            ShowFuelcostCalculatorForm();
+                            break;
+
                         case Keys.Return:
                             if (!this.calculationIsDone)
                             {
@@ -644,6 +648,8 @@ namespace Calculator
 
         private void CurrencyConverterToolStripMenuItem_Click(object sender, EventArgs e) => ShowCurrencyConverterForm();
 
+        private void FuelcostCalculatorToolStripMenuItem_Click(object sender, EventArgs e) => ShowFuelcostCalculatorForm();
+
         private static void ShowAboutForm()
         {
             using var aboutForm = new AboutForm();
@@ -708,6 +714,12 @@ namespace Calculator
         {
             var currencyConverterForm = new CurrencyConverterForm();
             currencyConverterForm.Show();
+        }
+
+        private static void ShowFuelcostCalculatorForm()
+        {
+            var fuelcostCalculatorForm = new FuelcostCalculatorForm();
+            fuelcostCalculatorForm.Show();
         }
 
         private void TopmostToolStripMenuItem_CheckedChanged(object sender, EventArgs e) => this.SetProgramTopmostVal(this.topmostToolStripMenuItem.Checked);
