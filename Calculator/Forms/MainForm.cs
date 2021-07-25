@@ -125,7 +125,7 @@ namespace Calculator
                 return;
             }
 
-            if (forceCheck || (DateTime.UtcNow - AppSettings.UpdatesLastCheckedTimestamp).Days >= 1)
+            if (forceCheck || (DateTime.Now - AppSettings.UpdatesLastCheckedTimestamp).Days >= 1)
             {
                 try
                 {
