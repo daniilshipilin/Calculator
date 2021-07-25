@@ -67,7 +67,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(105, 15);
             this.label3.TabIndex = 0;
-            this.label3.Text = "Price (L/EUR):";
+            this.label3.Text = "Price (EUR/L):";
             // 
             // tripDistanceTextBox
             // 
