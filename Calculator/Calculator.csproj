@@ -28,7 +28,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="ApplicationUpdater" Version="0.2.0" />
+		<PackageReference Include="ApplicationUpdater" Version="0.3.0" />
 		<PackageReference Include="GitVersion.MsBuild">
 			<Version>5.6.10</Version>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

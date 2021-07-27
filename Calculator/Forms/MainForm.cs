@@ -125,7 +125,7 @@ namespace Calculator
                 return;
             }
 
-            if (forceCheck || (DateTime.Now - AppSettings.UpdatesLastCheckedTimestamp).Days >= 1)
+            if (forceCheck)
             {
                 try
                 {
@@ -135,8 +135,8 @@ namespace Calculator
                     {
                         var dr = MessageBox.Show(
                             new Form { TopMost = true },
-                            this.updater.UpdatePromptFormatted,
-                            "Program update required",
+                            this.updater.GetUpdatePrompt(),
+                            "Program update",
                             MessageBoxButtons.YesNo,
                             MessageBoxIcon.Question);
 
@@ -145,15 +145,45 @@ namespace Calculator
                             await this.updater.Update();
                             Program.ProgramExit();
                         }
+
+                        return;
                     }
 
-                    if (forceCheck)
+                    MessageBox.Show(
+                        "Current program version is up to date.",
+                        "Program update",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    ShowExceptionMessage(ex);
+                }
+            }
+            else if ((DateTime.Now - AppSettings.UpdatesLastCheckedTimestamp).Days >= 1)
+            {
+                try
+                {
+                    AppSettings.UpdateUpdatesLastCheckedTimestamp();
+
+                    if (await this.updater.CheckUpdateIsAvailable())
                     {
-                        MessageBox.Show(
-                            "Program is up to date",
-                            "Information",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information);
+                        var dr = MessageBox.Show(
+                            new Form { TopMost = true },
+                            $"Newer program version available.{Environment.NewLine}" +
+                            $"Current: {this.updater.ClientVersion}{Environment.NewLine}" +
+                            $"Available: {this.updater.ServerVersion}",
+                            "Program update",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Question);
+
+                        if (dr == DialogResult.Yes)
+                        {
+                            await this.updater.Update();
+                            Program.ProgramExit();
+                        }
+
+                        return;
                     }
                 }
                 catch (Exception ex)
