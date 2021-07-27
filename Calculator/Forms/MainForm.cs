@@ -176,14 +176,6 @@ namespace Calculator
                             "Program update",
                             MessageBoxButtons.YesNo,
                             MessageBoxIcon.Question);
-
-                        if (dr == DialogResult.Yes)
-                        {
-                            await this.updater.Update();
-                            Program.ProgramExit();
-                        }
-
-                        return;
                     }
                 }
                 catch (Exception ex)
