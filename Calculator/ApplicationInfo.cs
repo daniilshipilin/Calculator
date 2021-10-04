@@ -3,6 +3,7 @@ namespace Calculator
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.IO;
     using System.Linq;
     using System.Reflection;
 
@@ -23,7 +24,7 @@ namespace Calculator
 
         public static IList<string>? Args { get; private set; }
 
-        public static string BaseDirectory { get; } = Environment.CurrentDirectory;
+        public static string BaseDirectory => Path.GetDirectoryName(ExePath) ?? string.Empty;
 
         public static string ExePath { get; } = Process.GetCurrentProcess().MainModule?.FileName ?? string.Empty;
 
