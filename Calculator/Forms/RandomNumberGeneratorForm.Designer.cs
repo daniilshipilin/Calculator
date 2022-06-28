@@ -224,6 +224,7 @@ namespace Calculator
             this.rngCheckBox.TabIndex = 8;
             this.rngCheckBox.Text = "RNG";
             this.rngCheckBox.UseVisualStyleBackColor = true;
+            this.rngCheckBox.Enabled = false;
             //
             // RandomNumberGeneratorForm
             //

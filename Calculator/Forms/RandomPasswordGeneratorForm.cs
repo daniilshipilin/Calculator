@@ -5,6 +5,7 @@ namespace Calculator
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
+    using System.Security.Cryptography;
     using System.Threading.Tasks;
     using System.Windows.Forms;
     using Calculator.Helpers;
@@ -194,13 +195,15 @@ namespace Calculator
                        : Task.Run(() => this.GenerateRandomPasswords(this.CharsetCharsTextBoxText, qty, length));
 
             // wait till task finish executing
-            await Task.WhenAll(task);
+            await task;
 
             sw.Stop();
 
             if (this._rndPasswords is not null)
             {
-                this.OutputTextBoxText = string.Join(Environment.NewLine, this._rndPasswords);
+                string tmp = string.Join(Environment.NewLine, this._rndPasswords);
+                this.OutputTextBoxText = tmp;
+                Clipboard.SetDataObject(tmp);
             }
 
             this.ToolStripStatusLabelText = $"Elapsed: {sw.ElapsedMilliseconds} ms.";
@@ -233,7 +236,6 @@ namespace Calculator
         private void GenerateRandomPasswords(string charset, int qty, int length)
         {
             this._rndPasswords = new string[qty];
-            INumberGenerator rnd = new RNGNumberGenerator();
 
             for (int i = 0; i < this._rndPasswords.Length; i++)
             {
@@ -241,7 +243,7 @@ namespace Calculator
 
                 for (int j = 0; j < randomPassword.Length; j++)
                 {
-                    int pos = rnd.GetInt32(charset.Length);
+                    int pos = RandomNumberGenerator.GetInt32(charset.Length);
                     randomPassword[j] = charset[pos];
                 }
 
@@ -252,7 +254,6 @@ namespace Calculator
         private void GenerateRandomUniqueSequencePasswords(string charset, int qty, int length)
         {
             this._rndPasswords = new string[qty];
-            INumberGenerator rnd = new RNGNumberGenerator();
 
             for (int i = 0; i < this._rndPasswords.Length; i++)
             {
@@ -261,7 +262,7 @@ namespace Calculator
 
                 for (int j = 0; j < randomPassword.Length; j++)
                 {
-                    int pos = rnd.GetInt32(charsetList.Count);
+                    int pos = RandomNumberGenerator.GetInt32(charsetList.Count);
                     randomPassword[j] = charsetList[pos];
                     charsetList.RemoveAt(pos);
                 }

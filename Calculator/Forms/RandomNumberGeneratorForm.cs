@@ -5,6 +5,7 @@ namespace Calculator
     using System.Diagnostics;
     using System.Drawing;
     using System.Drawing.Imaging;
+    using System.Security.Cryptography;
     using System.Threading.Tasks;
     using System.Windows.Forms;
     using Calculator.Helpers;
@@ -170,22 +171,10 @@ namespace Calculator
         {
             this._rndNumbers = new int[this._qty];
             progress.Report(100);
-            INumberGenerator rnd;
-
-            if (this.rngCheckBox.Checked)
-            {
-                // using RNGCryptoServiceProvider
-                rnd = new RNGNumberGenerator();
-            }
-            else
-            {
-                // using Random
-                rnd = new RandomNumberGenerator();
-            }
 
             for (int i = 0; i < this._qty; i++)
             {
-                this._rndNumbers[i] = rnd.GetInt32(this._minVal, this._maxVal);
+                this._rndNumbers[i] = RandomNumberGenerator.GetInt32(this._minVal, this._maxVal);
             }
 
             progress.Report(0);
@@ -240,18 +229,7 @@ namespace Calculator
 
             var stopWatch = Stopwatch.StartNew();
             var bmp = new Bitmap(x_width, y_height);
-            INumberGenerator rnd;
-
-            if (this.rngCheckBox.Checked)
-            {
-                // using RNGCryptoServiceProvider
-                rnd = new RNGNumberGenerator();
-            }
-            else
-            {
-                // using Random
-                rnd = new RandomNumberGenerator();
-            }
+            using var rnd = RandomNumberGenerator.Create();
 
             // create random pixels
             for (int y = 0; y < y_height; y++)
@@ -261,7 +239,7 @@ namespace Calculator
                     byte[] argb = new byte[4];
 
                     // generate random ARGB value by filling byte array
-                    rnd.FillBytes(argb);
+                    rnd.GetBytes(argb);
 
                     // set ARGB value
                     bmp.SetPixel(x, y, Color.FromArgb(argb[0], argb[1], argb[2], argb[3]));
