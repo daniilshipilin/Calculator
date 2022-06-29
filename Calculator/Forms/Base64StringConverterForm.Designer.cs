@@ -1,4 +1,4 @@
-namespace Calculator
+namespace Calculator.Forms
 {
     partial class Base64StringConverterForm
     {

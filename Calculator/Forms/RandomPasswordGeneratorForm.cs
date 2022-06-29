@@ -1,390 +1,339 @@
-namespace Calculator
+namespace Calculator.Forms;
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Calculator.Helpers;
+
+public partial class RandomPasswordGeneratorForm : Form
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using System.Security.Cryptography;
-    using System.Threading.Tasks;
-    using System.Windows.Forms;
-    using Calculator.Helpers;
+    private const string NUMERIC = "0123456789";
+    private const string SYMBOLS14 = "!@#$%^&*()-_+=";
+    private const string SYMBOLS_ALL = "!@#$%^&*()-_+=~`[]{}|\\:;\"'<>,.?/ ";
+    private const string HEX_LOWER = "0123456789abcdef";
+    private const string HEX_UPPER = "0123456789ABCDEF";
+    private const string UALPHA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private const string UALPHA_NUMERIC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    private const string UALPHA_NUMERIC_SYMBOL14 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_+=";
+    private const string UALPHA_NUMERIC_ALL = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_+=~`[]{}|\\:;\"'<>,.?/ ";
+    private const string LALPHA = "abcdefghijklmnopqrstuvwxyz";
+    private const string LALPHA_NUMERIC = "abcdefghijklmnopqrstuvwxyz0123456789";
+    private const string LALPHA_NUMERIC_SYMBOL14 = "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_+=";
+    private const string LALPHA_NUMERIC_ALL = "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_+=~`[]{}|\\:;\"'<>,.?/ ";
+    private const string MIXALPHA = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private const string MIXALPHA_NUMERIC = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    private const string MIXALPHA_NUMERIC_SYMBOL14 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_+=";
+    private const string MIXALPHA_NUMERIC_ALL = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_+=~`[]{}|\\:;\"'<>,.?/ ";
+    private const string PASSWORD_CHARSET = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ123456789!@#$%^&*()-_+=";
 
-    public partial class RandomPasswordGeneratorForm : Form
+    private static readonly IReadOnlyList<string> Charset = new List<string>
     {
-        private const string NUMERIC = "0123456789";
-        private const string SYMBOLS14 = "!@#$%^&*()-_+=";
-        private const string SYMBOLS_ALL = "!@#$%^&*()-_+=~`[]{}|\\:;\"'<>,.?/ ";
-        private const string HEX_LOWER = "0123456789abcdef";
-        private const string HEX_UPPER = "0123456789ABCDEF";
-        private const string UALPHA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        private const string UALPHA_NUMERIC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        private const string UALPHA_NUMERIC_SYMBOL14 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_+=";
-        private const string UALPHA_NUMERIC_ALL = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_+=~`[]{}|\\:;\"'<>,.?/ ";
-        private const string LALPHA = "abcdefghijklmnopqrstuvwxyz";
-        private const string LALPHA_NUMERIC = "abcdefghijklmnopqrstuvwxyz0123456789";
-        private const string LALPHA_NUMERIC_SYMBOL14 = "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_+=";
-        private const string LALPHA_NUMERIC_ALL = "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_+=~`[]{}|\\:;\"'<>,.?/ ";
-        private const string MIXALPHA = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        private const string MIXALPHA_NUMERIC = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        private const string MIXALPHA_NUMERIC_SYMBOL14 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_+=";
-        private const string MIXALPHA_NUMERIC_ALL = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_+=~`[]{}|\\:;\"'<>,.?/ ";
-        private const string PASSWORD_CHARSET = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ123456789!@#$%^&*()-_+=";
+        nameof(NUMERIC),
+        nameof(SYMBOLS14),
+        nameof(SYMBOLS_ALL),
+        nameof(HEX_LOWER),
+        nameof(HEX_UPPER),
+        nameof(UALPHA),
+        nameof(UALPHA_NUMERIC),
+        nameof(UALPHA_NUMERIC_SYMBOL14),
+        nameof(UALPHA_NUMERIC_ALL),
+        nameof(LALPHA),
+        nameof(LALPHA_NUMERIC),
+        nameof(LALPHA_NUMERIC_SYMBOL14),
+        nameof(LALPHA_NUMERIC_ALL),
+        nameof(MIXALPHA),
+        nameof(MIXALPHA_NUMERIC),
+        nameof(MIXALPHA_NUMERIC_SYMBOL14),
+        nameof(MIXALPHA_NUMERIC_ALL),
+        nameof(PASSWORD_CHARSET),
+    };
 
-        private static readonly IReadOnlyList<string> Charset = new List<string>
+    // random passwords string array
+    private string[]? rndPasswords;
+
+    public RandomPasswordGeneratorForm()
+    {
+        this.InitializeComponent();
+    }
+
+    private void RandomPasswordGeneratorForm_Load(object sender, EventArgs e)
+    {
+        this.TopMost = AppSettings.TopMost;
+        this.saveToFileButton.Enabled = false;
+
+        this.qtyTextBox.Text = AppSettings.PasswordQty.ToString();
+        this.passwordLengthTextBox.Text = AppSettings.PasswordLength.ToString();
+
+        foreach (string item in Charset)
         {
-            nameof(NUMERIC),
-            nameof(SYMBOLS14),
-            nameof(SYMBOLS_ALL),
-            nameof(HEX_LOWER),
-            nameof(HEX_UPPER),
-            nameof(UALPHA),
-            nameof(UALPHA_NUMERIC),
-            nameof(UALPHA_NUMERIC_SYMBOL14),
-            nameof(UALPHA_NUMERIC_ALL),
-            nameof(LALPHA),
-            nameof(LALPHA_NUMERIC),
-            nameof(LALPHA_NUMERIC_SYMBOL14),
-            nameof(LALPHA_NUMERIC_ALL),
-            nameof(MIXALPHA),
-            nameof(MIXALPHA_NUMERIC),
-            nameof(MIXALPHA_NUMERIC_SYMBOL14),
-            nameof(MIXALPHA_NUMERIC_ALL),
-            nameof(PASSWORD_CHARSET),
-        };
-
-        private string QtyTextBoxText
-        {
-            get => this.qtyTextBox.Text;
-
-            set => this.qtyTextBox.Text = value;
+            this.charsetSelectComboBox.Items.Add(item);
         }
 
-        private string PasswordLengthTextBoxText
-        {
-            get => this.passwordLengthTextBox.Text;
+        this.charsetSelectComboBox.Text = AppSettings.PasswordCharset.ToString();
+    }
 
-            set => this.passwordLengthTextBox.Text = value;
+    private void RandomPasswordGeneratorForm_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.KeyCode == Keys.Escape)
+        {
+            this.Close();
+        }
+    }
+
+    private void CharsetCharsTextBox_TextChanged(object sender, EventArgs e) => this.charsetCharsCountLabel.Text = $"{this.charsetCharsTextBox.Text.Length} char(s)";
+
+    private async void GenerateButton_Click(object sender, EventArgs e)
+    {
+        // how many random passwords should be generated
+        int qty = 0;
+        // generated password length
+        int length = 0;
+
+        try
+        {
+            qty = int.Parse(this.qtyTextBox.Text);
+            length = int.Parse(this.passwordLengthTextBox.Text);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"{ex.Message}", "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
         }
 
-        private string CharsetSelectComboBoxText
+        if (qty <= 0 || length <= 0)
         {
-            get => this.charsetSelectComboBox.Text;
-
-            set => this.charsetSelectComboBox.Text = value;
+            MessageBox.Show("Qty/length must be a positive integer", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
         }
 
-        private string OutputTextBoxText
+        if (string.IsNullOrEmpty(this.charsetCharsTextBox.Text))
         {
-            get => this.outputTextBox.Text;
-
-            set => this.outputTextBox.Text = value;
+            MessageBox.Show("Charset textbox is empty", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
         }
 
-        private string CharsetCharsTextBoxText
+        if (this.uniqueSequenceCheckBox.Checked && this.charsetCharsTextBox.Text.Length < length)
         {
-            get => this.charsetCharsTextBox.Text;
-
-            set => this.charsetCharsTextBox.Text = value;
+            MessageBox.Show("Charset chars count is less than password length", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
         }
 
-        private string CharsetCharsCountLabelText
+        if (this.uniqueSequenceCheckBox.Checked && !CharsetIsUnique(this.charsetCharsTextBox.Text))
         {
-            set => this.charsetCharsCountLabel.Text = value;
+            MessageBox.Show("Charset has duplicate items", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
         }
 
-        private string ToolStripStatusLabelText
+        this.Clear();
+
+        this.generateButton.Enabled = false;
+        this.toolStripStatusLabel.Text = "Executing...";
+
+        this.progressBar.Style = ProgressBarStyle.Marquee;
+        this.progressBar.MarqueeAnimationSpeed = 100;
+
+        var sw = Stopwatch.StartNew();
+
+        // create a task
+        var task = this.uniqueSequenceCheckBox.Checked
+                   ? Task.Run(() => this.GenerateRandomUniqueSequencePasswords(this.charsetCharsTextBox.Text, qty, length))
+                   : Task.Run(() => this.GenerateRandomPasswords(this.charsetCharsTextBox.Text, qty, length));
+
+        // wait till task finish executing
+        await task;
+
+        sw.Stop();
+
+        if (this.rndPasswords is not null)
         {
-            set => this.toolStripStatusLabel.Text = value;
+            string tmp = string.Join(Environment.NewLine, this.rndPasswords);
+            this.outputTextBox.Text = tmp;
+            Clipboard.SetDataObject(tmp);
         }
 
-        private bool CharsetCharsTextBoxReadOnly
+        this.toolStripStatusLabel.Text = $"Elapsed: {sw.ElapsedMilliseconds} ms.";
+
+        this.progressBar.Style = ProgressBarStyle.Blocks;
+        this.progressBar.Value = 100;
+        this.generateButton.Enabled = true;
+        this.saveToFileButton.Enabled = true;
+    }
+
+    private static bool CharsetIsUnique(string charset)
+    {
+        // using two bytes size bool array for Unicode chars
+        bool[] array = new bool[char.MaxValue];
+
+        foreach (char ch in charset)
         {
-            set => this.charsetCharsTextBox.ReadOnly = value;
+            if (array[ch])
+            {
+                // return false, when duplicate char was found
+                return false;
+            }
+
+            array[ch] = true;
         }
 
-        // random passwords string array
-        private string[]? _rndPasswords;
+        return true;
+    }
 
-        public RandomPasswordGeneratorForm()
+    private void GenerateRandomPasswords(string charset, int qty, int length)
+    {
+        this.rndPasswords = new string[qty];
+
+        for (int i = 0; i < this.rndPasswords.Length; i++)
         {
-            this.InitializeComponent();
+            char[] randomPassword = new char[length];
+
+            for (int j = 0; j < randomPassword.Length; j++)
+            {
+                int pos = RandomNumberGenerator.GetInt32(charset.Length);
+                randomPassword[j] = charset[pos];
+            }
+
+            this.rndPasswords[i] = new string(randomPassword);
         }
+    }
 
-        private void RandomPasswordGeneratorForm_Load(object sender, EventArgs e)
+    private void GenerateRandomUniqueSequencePasswords(string charset, int qty, int length)
+    {
+        this.rndPasswords = new string[qty];
+
+        for (int i = 0; i < this.rndPasswords.Length; i++)
         {
-            this.TopMost = AppSettings.TopMost;
-            this.saveToFileButton.Enabled = false;
+            var charsetList = charset.ToList();
+            char[] randomPassword = new char[length];
 
-            this.QtyTextBoxText = AppSettings.PasswordQty.ToString();
-            this.PasswordLengthTextBoxText = AppSettings.PasswordLength.ToString();
-
-            foreach (string item in Charset)
+            for (int j = 0; j < randomPassword.Length; j++)
             {
-                this.charsetSelectComboBox.Items.Add(item);
+                int pos = RandomNumberGenerator.GetInt32(charsetList.Count);
+                randomPassword[j] = charsetList[pos];
+                charsetList.RemoveAt(pos);
             }
 
-            this.CharsetSelectComboBoxText = AppSettings.PasswordCharset.ToString();
+            this.rndPasswords[i] = new string(randomPassword);
         }
+    }
 
-        private void RandomPasswordGeneratorForm_KeyDown(object sender, KeyEventArgs e)
+    private void ClearButton_Click(object sender, EventArgs e) => this.Clear();
+
+    private void Clear()
+    {
+        this.outputTextBox.Text = string.Empty;
+        // reset current progress bar value
+        this.progressBar.Value = 0;
+        this.toolStripStatusLabel.Text = string.Empty;
+        this.saveToFileButton.Enabled = false;
+        // Initiate garbage collector
+        GC.Collect();
+    }
+
+    private void QtyTextBox_TextChanged(object sender, EventArgs e) => AppSettings.PasswordQty = int.Parse(this.qtyTextBox.Text);
+
+    private void PasswordLengthTextBox_TextChanged(object sender, EventArgs e) => AppSettings.PasswordLength = int.Parse(this.passwordLengthTextBox.Text);
+
+    private void CharsetSelectComboBox_SelectedValueChanged(object sender, EventArgs e)
+    {
+        AppSettings.PasswordCharset = this.charsetSelectComboBox.Text;
+
+        if (this.charsetSelectComboBox.Text == nameof(PASSWORD_CHARSET))
         {
-            if (e.KeyCode == Keys.Escape)
-            {
-                this.Close();
-            }
+            this.charsetCharsTextBox.Text = PASSWORD_CHARSET;
         }
-
-        private void CharsetCharsTextBox_TextChanged(object sender, EventArgs e) => this.CharsetCharsCountLabelText = $"{this.CharsetCharsTextBoxText.Length} char(s)";
-
-        private async void GenerateButton_Click(object sender, EventArgs e)
+        else if (this.charsetSelectComboBox.Text == nameof(HEX_LOWER))
         {
-            // how many random passwords should be generated
-            int qty = 0;
-            // generated password length
-            int length = 0;
-
-            try
-            {
-                qty = int.Parse(this.QtyTextBoxText);
-                length = int.Parse(this.PasswordLengthTextBoxText);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"{ex.Message}", "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            if (qty <= 0 || length <= 0)
-            {
-                MessageBox.Show("Qty/length must be a positive integer", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (string.IsNullOrEmpty(this.CharsetCharsTextBoxText))
-            {
-                MessageBox.Show("Charset textbox is empty", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (this.uniqueSequenceCheckBox.Checked && this.CharsetCharsTextBoxText.Length < length)
-            {
-                MessageBox.Show("Charset chars count is less than password length", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (this.uniqueSequenceCheckBox.Checked && !CharsetIsUnique(this.CharsetCharsTextBoxText))
-            {
-                MessageBox.Show("Charset has duplicate items", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            this.Clear();
-
-            this.generateButton.Enabled = false;
-            this.ToolStripStatusLabelText = "Executing...";
-
-            this.progressBar.Style = ProgressBarStyle.Marquee;
-            this.progressBar.MarqueeAnimationSpeed = 100;
-
-            var sw = Stopwatch.StartNew();
-
-            // create a task
-            var task = this.uniqueSequenceCheckBox.Checked
-                       ? Task.Run(() => this.GenerateRandomUniqueSequencePasswords(this.CharsetCharsTextBoxText, qty, length))
-                       : Task.Run(() => this.GenerateRandomPasswords(this.CharsetCharsTextBoxText, qty, length));
-
-            // wait till task finish executing
-            await task;
-
-            sw.Stop();
-
-            if (this._rndPasswords is not null)
-            {
-                string tmp = string.Join(Environment.NewLine, this._rndPasswords);
-                this.OutputTextBoxText = tmp;
-                Clipboard.SetDataObject(tmp);
-            }
-
-            this.ToolStripStatusLabelText = $"Elapsed: {sw.ElapsedMilliseconds} ms.";
-
-            this.progressBar.Style = ProgressBarStyle.Blocks;
-            this.progressBar.Value = 100;
-            this.generateButton.Enabled = true;
-            this.saveToFileButton.Enabled = true;
+            this.charsetCharsTextBox.Text = HEX_LOWER;
         }
-
-        private static bool CharsetIsUnique(string charset)
+        else if (this.charsetSelectComboBox.Text == nameof(HEX_UPPER))
         {
-            // using two bytes size bool array for Unicode chars
-            bool[] array = new bool[char.MaxValue];
-
-            foreach (char ch in charset)
-            {
-                if (array[ch])
-                {
-                    // return false, when duplicate char was found
-                    return false;
-                }
-
-                array[ch] = true;
-            }
-
-            return true;
+            this.charsetCharsTextBox.Text = HEX_UPPER;
         }
-
-        private void GenerateRandomPasswords(string charset, int qty, int length)
+        else if (this.charsetSelectComboBox.Text == nameof(LALPHA))
         {
-            this._rndPasswords = new string[qty];
-
-            for (int i = 0; i < this._rndPasswords.Length; i++)
-            {
-                char[] randomPassword = new char[length];
-
-                for (int j = 0; j < randomPassword.Length; j++)
-                {
-                    int pos = RandomNumberGenerator.GetInt32(charset.Length);
-                    randomPassword[j] = charset[pos];
-                }
-
-                this._rndPasswords[i] = new string(randomPassword);
-            }
+            this.charsetCharsTextBox.Text = LALPHA;
         }
-
-        private void GenerateRandomUniqueSequencePasswords(string charset, int qty, int length)
+        else if (this.charsetSelectComboBox.Text == nameof(LALPHA_NUMERIC))
         {
-            this._rndPasswords = new string[qty];
+            this.charsetCharsTextBox.Text = LALPHA_NUMERIC;
+        }
+        else if (this.charsetSelectComboBox.Text == nameof(LALPHA_NUMERIC_ALL))
+        {
+            this.charsetCharsTextBox.Text = LALPHA_NUMERIC_ALL;
+        }
+        else if (this.charsetSelectComboBox.Text == nameof(LALPHA_NUMERIC_SYMBOL14))
+        {
+            this.charsetCharsTextBox.Text = LALPHA_NUMERIC_SYMBOL14;
+        }
+        else if (this.charsetSelectComboBox.Text == nameof(MIXALPHA))
+        {
+            this.charsetCharsTextBox.Text = MIXALPHA;
+        }
+        else if (this.charsetSelectComboBox.Text == nameof(MIXALPHA_NUMERIC))
+        {
+            this.charsetCharsTextBox.Text = MIXALPHA_NUMERIC;
+        }
+        else if (this.charsetSelectComboBox.Text == nameof(MIXALPHA_NUMERIC_ALL))
+        {
+            this.charsetCharsTextBox.Text = MIXALPHA_NUMERIC_ALL;
+        }
+        else if (this.charsetSelectComboBox.Text == nameof(MIXALPHA_NUMERIC_SYMBOL14))
+        {
+            this.charsetCharsTextBox.Text = MIXALPHA_NUMERIC_SYMBOL14;
+        }
+        else if (this.charsetSelectComboBox.Text == nameof(NUMERIC))
+        {
+            this.charsetCharsTextBox.Text = NUMERIC;
+        }
+        else if (this.charsetSelectComboBox.Text == nameof(SYMBOLS14))
+        {
+            this.charsetCharsTextBox.Text = SYMBOLS14;
+        }
+        else if (this.charsetSelectComboBox.Text == nameof(SYMBOLS_ALL))
+        {
+            this.charsetCharsTextBox.Text = SYMBOLS_ALL;
+        }
+        else if (this.charsetSelectComboBox.Text == nameof(UALPHA))
+        {
+            this.charsetCharsTextBox.Text = UALPHA;
+        }
+        else if (this.charsetSelectComboBox.Text == nameof(UALPHA_NUMERIC))
+        {
+            this.charsetCharsTextBox.Text = UALPHA_NUMERIC;
+        }
+        else if (this.charsetSelectComboBox.Text == nameof(UALPHA_NUMERIC_ALL))
+        {
+            this.charsetCharsTextBox.Text = UALPHA_NUMERIC_ALL;
+        }
+        else if (this.charsetSelectComboBox.Text == nameof(UALPHA_NUMERIC_SYMBOL14))
+        {
+            this.charsetCharsTextBox.Text = UALPHA_NUMERIC_SYMBOL14;
+        }
+    }
 
-            for (int i = 0; i < this._rndPasswords.Length; i++)
+    private void EditCheckBox_CheckedChanged(object sender, EventArgs e) => this.charsetCharsTextBox.ReadOnly = !this.editCheckBox.Checked;
+
+    private void SaveToFileButton_Click(object sender, EventArgs e)
+    {
+        var saveFileDialog = new SaveFileDialog();
+
+        try
+        {
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                var charsetList = charset.ToList();
-                char[] randomPassword = new char[length];
-
-                for (int j = 0; j < randomPassword.Length; j++)
-                {
-                    int pos = RandomNumberGenerator.GetInt32(charsetList.Count);
-                    randomPassword[j] = charsetList[pos];
-                    charsetList.RemoveAt(pos);
-                }
-
-                this._rndPasswords[i] = new string(randomPassword);
+                string fileName = saveFileDialog.FileName;
+                File.WriteAllText(fileName, this.outputTextBox.Text);
+                MessageBox.Show($"File saved as: '{fileName}'", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
-
-        private void ClearButton_Click(object sender, EventArgs e) => this.Clear();
-
-        private void Clear()
+        catch (Exception ex)
         {
-            this.OutputTextBoxText = string.Empty;
-            // reset current progress bar value
-            this.progressBar.Value = 0;
-            this.ToolStripStatusLabelText = string.Empty;
-            this.saveToFileButton.Enabled = false;
-            // Initiate garbage collector
-            GC.Collect();
-        }
-
-        private void QtyTextBox_TextChanged(object sender, EventArgs e) => AppSettings.PasswordQty = int.Parse(this.QtyTextBoxText);
-
-        private void PasswordLengthTextBox_TextChanged(object sender, EventArgs e) => AppSettings.PasswordLength = int.Parse(this.PasswordLengthTextBoxText);
-
-        private void CharsetSelectComboBox_SelectedValueChanged(object sender, EventArgs e)
-        {
-            AppSettings.PasswordCharset = this.CharsetSelectComboBoxText;
-
-            if (this.CharsetSelectComboBoxText == nameof(PASSWORD_CHARSET))
-            {
-                this.CharsetCharsTextBoxText = PASSWORD_CHARSET;
-            }
-            else if (this.CharsetSelectComboBoxText == nameof(HEX_LOWER))
-            {
-                this.CharsetCharsTextBoxText = HEX_LOWER;
-            }
-            else if (this.CharsetSelectComboBoxText == nameof(HEX_UPPER))
-            {
-                this.CharsetCharsTextBoxText = HEX_UPPER;
-            }
-            else if (this.CharsetSelectComboBoxText == nameof(LALPHA))
-            {
-                this.CharsetCharsTextBoxText = LALPHA;
-            }
-            else if (this.CharsetSelectComboBoxText == nameof(LALPHA_NUMERIC))
-            {
-                this.CharsetCharsTextBoxText = LALPHA_NUMERIC;
-            }
-            else if (this.CharsetSelectComboBoxText == nameof(LALPHA_NUMERIC_ALL))
-            {
-                this.CharsetCharsTextBoxText = LALPHA_NUMERIC_ALL;
-            }
-            else if (this.CharsetSelectComboBoxText == nameof(LALPHA_NUMERIC_SYMBOL14))
-            {
-                this.CharsetCharsTextBoxText = LALPHA_NUMERIC_SYMBOL14;
-            }
-            else if (this.CharsetSelectComboBoxText == nameof(MIXALPHA))
-            {
-                this.CharsetCharsTextBoxText = MIXALPHA;
-            }
-            else if (this.CharsetSelectComboBoxText == nameof(MIXALPHA_NUMERIC))
-            {
-                this.CharsetCharsTextBoxText = MIXALPHA_NUMERIC;
-            }
-            else if (this.CharsetSelectComboBoxText == nameof(MIXALPHA_NUMERIC_ALL))
-            {
-                this.CharsetCharsTextBoxText = MIXALPHA_NUMERIC_ALL;
-            }
-            else if (this.CharsetSelectComboBoxText == nameof(MIXALPHA_NUMERIC_SYMBOL14))
-            {
-                this.CharsetCharsTextBoxText = MIXALPHA_NUMERIC_SYMBOL14;
-            }
-            else if (this.CharsetSelectComboBoxText == nameof(NUMERIC))
-            {
-                this.CharsetCharsTextBoxText = NUMERIC;
-            }
-            else if (this.CharsetSelectComboBoxText == nameof(SYMBOLS14))
-            {
-                this.CharsetCharsTextBoxText = SYMBOLS14;
-            }
-            else if (this.CharsetSelectComboBoxText == nameof(SYMBOLS_ALL))
-            {
-                this.CharsetCharsTextBoxText = SYMBOLS_ALL;
-            }
-            else if (this.CharsetSelectComboBoxText == nameof(UALPHA))
-            {
-                this.CharsetCharsTextBoxText = UALPHA;
-            }
-            else if (this.CharsetSelectComboBoxText == nameof(UALPHA_NUMERIC))
-            {
-                this.CharsetCharsTextBoxText = UALPHA_NUMERIC;
-            }
-            else if (this.CharsetSelectComboBoxText == nameof(UALPHA_NUMERIC_ALL))
-            {
-                this.CharsetCharsTextBoxText = UALPHA_NUMERIC_ALL;
-            }
-            else if (this.CharsetSelectComboBoxText == nameof(UALPHA_NUMERIC_SYMBOL14))
-            {
-                this.CharsetCharsTextBoxText = UALPHA_NUMERIC_SYMBOL14;
-            }
-        }
-
-        private void EditCheckBox_CheckedChanged(object sender, EventArgs e) => this.CharsetCharsTextBoxReadOnly = !this.editCheckBox.Checked;
-
-        private void SaveToFileButton_Click(object sender, EventArgs e)
-        {
-            var saveFileDialog = new SaveFileDialog();
-
-            try
-            {
-                if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    string fileName = saveFileDialog.FileName;
-                    File.WriteAllText(fileName, this.OutputTextBoxText);
-                    MessageBox.Show($"File saved as: '{fileName}'", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"{ex.Message}", "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            MessageBox.Show($"{ex.Message}", "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }

@@ -1,12 +1,11 @@
-namespace Calculator.Forms
-{
-    using System.Windows.Forms;
+namespace Calculator.Forms;
 
-    public partial class RatesForm : Form
+using System.Windows.Forms;
+
+public partial class RatesForm : Form
+{
+    public RatesForm()
     {
-        public RatesForm()
-        {
-            this.InitializeComponent();
-        }
+        this.InitializeComponent();
     }
 }
