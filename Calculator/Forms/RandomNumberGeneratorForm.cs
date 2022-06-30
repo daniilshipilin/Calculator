@@ -32,7 +32,6 @@ public partial class RandomNumberGeneratorForm : Form
         // textbox tooltips
         this.randomNumberGeneratorFormToolTip.SetToolTip(this.minTextBox, "Random number min value (inclusive) - X pixels");
         this.randomNumberGeneratorFormToolTip.SetToolTip(this.maxTextBox, "Random number max value (exclusive) - Y pixels");
-        this.randomNumberGeneratorFormToolTip.SetToolTip(this.rngCheckBox, "Use RNGCryptoServiceProvider(), instead of Random()");
 
         this.qtyTextBox.Text = AppSettings.RandomQty.ToString();
         this.minTextBox.Text = AppSettings.RandomMin.ToString();

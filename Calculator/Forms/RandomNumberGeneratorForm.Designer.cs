@@ -45,7 +45,6 @@ namespace Calculator.Forms
             this.generateRandomPictureButton = new System.Windows.Forms.Button();
             this.statusToolStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.rngCheckBox = new System.Windows.Forms.CheckBox();
             this.statusToolStrip.SuspendLayout();
             this.SuspendLayout();
             //
@@ -213,26 +212,12 @@ namespace Calculator.Forms
             this.toolStripStatusLabel.Name = "toolStripStatusLabel";
             this.toolStripStatusLabel.Size = new System.Drawing.Size(0, 17);
             //
-            // rngCheckBox
-            //
-            this.rngCheckBox.AutoSize = true;
-            this.rngCheckBox.Checked = true;
-            this.rngCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.rngCheckBox.Location = new System.Drawing.Point(205, 46);
-            this.rngCheckBox.Name = "rngCheckBox";
-            this.rngCheckBox.Size = new System.Drawing.Size(47, 19);
-            this.rngCheckBox.TabIndex = 8;
-            this.rngCheckBox.Text = "RNG";
-            this.rngCheckBox.UseVisualStyleBackColor = true;
-            this.rngCheckBox.Enabled = false;
-            //
             // RandomNumberGeneratorForm
             //
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.WhiteSmoke;
             this.ClientSize = new System.Drawing.Size(484, 267);
-            this.Controls.Add(this.rngCheckBox);
             this.Controls.Add(this.statusToolStrip);
             this.Controls.Add(this.generateRandomPictureButton);
             this.Controls.Add(this.generateButton);
@@ -282,6 +267,5 @@ namespace Calculator.Forms
         private System.Windows.Forms.Button generateRandomPictureButton;
         private System.Windows.Forms.StatusStrip statusToolStrip;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
-        private System.Windows.Forms.CheckBox rngCheckBox;
     }
 }
