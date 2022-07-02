@@ -115,6 +115,30 @@ public partial class MainForm : Form
 
                     if (dr == DialogResult.Yes)
                     {
+                        var updateForm = new Form
+                        {
+                            Text = "Program update",
+                            Width = 300,
+                            Height = 150,
+                            FormBorderStyle = FormBorderStyle.FixedSingle,
+                            StartPosition = FormStartPosition.CenterScreen,
+                            ShowInTaskbar = false,
+                            ShowIcon = false,
+                            MinimizeBox = false,
+                            MaximizeBox = false,
+                            TopMost = AppSettings.TopMost,
+                        };
+
+                        var label = new Label
+                        {
+                            Size = new Size(300, 100),
+                            TextAlign = ContentAlignment.MiddleCenter,
+                            Text = $"Updating {ApplicationInfo.AppTitle} v{GitVersionInformation.SemVer} to version v{this.updater.ServerVersion}"
+                        };
+
+                        updateForm.Controls.Add(label);
+                        updateForm.Show();
+
                         await this.updater.Update();
                         Program.ProgramExit();
                     }
