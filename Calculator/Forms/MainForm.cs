@@ -33,7 +33,7 @@ public partial class MainForm : Form
         this.InitializeComponent();
     }
 
-    private void CalculatorForm_Load(object sender, EventArgs e)
+    private async void CalculatorForm_Load(object sender, EventArgs e)
     {
         AppSettings.CheckSettings();
         this.Text = $"{ApplicationInfo.AppHeader}";
@@ -44,8 +44,8 @@ public partial class MainForm : Form
         // init program updater
         this.InitUpdater();
 
-        // check for updates in the background
-        Task.Run(() => this.CheckUpdates());
+        // check for updates
+        await this.CheckUpdates();
     }
 
     private void SetTooltips()
@@ -98,9 +98,11 @@ public partial class MainForm : Form
             return;
         }
 
-        if (forceCheck)
+        try
         {
-            try
+            this.updatesMenuItem.Enabled = false;
+
+            if (forceCheck)
             {
                 AppSettings.UpdateUpdatesLastCheckedTimestamp();
 
@@ -152,14 +154,7 @@ public partial class MainForm : Form
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }
-            catch (Exception ex)
-            {
-                ShowExceptionMessage(ex);
-            }
-        }
-        else if ((DateTime.Now - AppSettings.UpdatesLastCheckedTimestamp).Days >= 1)
-        {
-            try
+            else if ((DateTime.Now - AppSettings.UpdatesLastCheckedTimestamp).Days >= 1)
             {
                 AppSettings.UpdateUpdatesLastCheckedTimestamp();
 
@@ -175,10 +170,14 @@ public partial class MainForm : Form
                         MessageBoxIcon.Question);
                 }
             }
-            catch (Exception ex)
-            {
-                ShowExceptionMessage(ex);
-            }
+        }
+        catch (Exception ex)
+        {
+            ShowExceptionMessage(ex);
+        }
+        finally
+        {
+            this.updatesMenuItem.Enabled = true;
         }
     }
 
