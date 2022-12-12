@@ -8,9 +8,7 @@
 		<AssemblyName>Calculator</AssemblyName>
 		<RootNamespace>Calculator</RootNamespace>
 		<ApplicationIcon>Images\calculator.ico</ApplicationIcon>
-		<Authors>Daniil Shipilin</Authors>
 		<Description>A simple basic calculator.</Description>
-		<Copyright>Daniil Shipilin</Copyright>
 		<Company>Illuminati Software Inc.</Company>
 		<Version>1.0.0</Version>
 		<Product>Calculator</Product>
