@@ -2,6 +2,7 @@ namespace Calculator.Models;
 
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 // fixer.io api description:
 // "latest" endpoint - request the most recent exchange rate data.
@@ -36,31 +37,37 @@ public class CurrencyApiJson
     /// <summary>
     /// Returns true or false depending on whether or not your API request has succeeded.
     /// </summary>
+    [JsonPropertyName("success")]
     public bool Success { get; set; }
 
     /// <summary>
     /// Returns the exact date and time (UNIX time stamp) the given rates were collected.
     /// </summary>
+    [JsonPropertyName("timestamp")]
     public int Timestamp { get; set; }
 
     /// <summary>
     /// Returns the three-letter currency code of the base currency used for this request.
     /// </summary>
+    [JsonPropertyName("base")]
     public string Base { get; set; } = string.Empty;
 
     /// <summary>
     /// The date the given exchange rate data was collected.
     /// </summary>
+    [JsonPropertyName("date")]
     public DateTime Date { get; set; }
 
     /// <summary>
     /// Returns exchange rate data for the currencies you have requested.
     /// </summary>
+    [JsonPropertyName("rates")]
     public Dictionary<string, decimal> Rates { get; set; } = new();
 
     /// <summary>
     /// Whenever a requested resource is not available or an API call fails for another reason, a JSON error is returned.
     /// </summary>
+    [JsonPropertyName("error")]
     public APIError? Error { get; set; }
 
     /// <summary>
@@ -71,10 +78,13 @@ public class CurrencyApiJson
 
 public class APIError
 {
+    [JsonPropertyName("code")]
     public int Code { get; set; }
 
+    [JsonPropertyName("type")]
     public string Type { get; set; } = string.Empty;
 
+    [JsonPropertyName("info")]
     public string Info { get; set; } = string.Empty;
 
     public override string ToString() => $"{this.Code}{Environment.NewLine}{this.Type}{Environment.NewLine}{this.Info}";
