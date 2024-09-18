@@ -463,12 +463,12 @@ public partial class MainForm : Form
         {
             var iData = Clipboard.GetDataObject();
 
-            if (!iData.GetDataPresent(DataFormats.Text))
+            if (!iData!.GetDataPresent(DataFormats.Text))
             {
                 return;
             }
 
-            if (!decimal.TryParse((string)Clipboard.GetDataObject().GetData(DataFormats.Text), out decimal parsedValue))
+            if (!decimal.TryParse((string)Clipboard.GetDataObject()!.GetData(DataFormats.Text)!, out decimal parsedValue))
             {
                 MessageBox.Show("Cannot convert clipboard text to number.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;

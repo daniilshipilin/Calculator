@@ -34,8 +34,8 @@ public partial class CurrencyConverterForm : Form
 
     private void SwitchButton_Click(object sender, EventArgs e)
     {
-        string? tmpCurrencyFrom = this.currencyFromComboBox.SelectedItem.ToString();
-        this.currencyFromComboBox.Text = this.currencyToComboBox.SelectedItem.ToString();
+        string? tmpCurrencyFrom = this.currencyFromComboBox.SelectedItem!.ToString();
+        this.currencyFromComboBox.Text = this.currencyToComboBox.SelectedItem!.ToString();
         this.currencyToComboBox.Text = tmpCurrencyFrom;
 
         CurrencyConverter.SwapAmounts();
@@ -73,8 +73,8 @@ public partial class CurrencyConverterForm : Form
         // checking whether currencies comboboxes have any selected items
         if (this.currencyFromComboBox.SelectedIndex != -1 && this.currencyToComboBox.SelectedIndex != -1)
         {
-            currencyFrom = this.currencyFromComboBox.SelectedItem.ToString();
-            currencyTo = this.currencyToComboBox.SelectedItem.ToString();
+            currencyFrom = this.currencyFromComboBox.SelectedItem!.ToString();
+            currencyTo = this.currencyToComboBox.SelectedItem!.ToString();
         }
 
         // bind currencies list with currencies combobox
