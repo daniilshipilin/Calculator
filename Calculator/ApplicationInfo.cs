@@ -32,7 +32,7 @@ public static class ApplicationInfo
 
     public static string AppProduct { get; } = Product?.Product ?? string.Empty;
 
-    public static string AppHeader { get; } = $"{AppTitle} v{GitVersionInformation.SemVer}{AppBuild}";
+    public static string AppHeader { get; } = $"{AppTitle} v{Ass.GetName().Version}{AppBuild}";
 
     public static string AppAuthor { get; } = Copyright?.Copyright ?? string.Empty;
 
@@ -44,14 +44,12 @@ public static class ApplicationInfo
     /// Gets application info formatted string.
     /// </summary>
     public static string AppInfoFormatted =>
-        $"{AppHeader}{Environment.NewLine}" +
-        $"{GitVersionInformation.InformationalVersion}{Environment.NewLine}" +
-        $"Author: {AppAuthor}{Environment.NewLine}{Environment.NewLine}" +
+        $"{AppHeader}{Environment.NewLine}{Environment.NewLine}" +
         $"Description:{Environment.NewLine}" +
         $"  {AppDescription}";
 
     public static string AppInfoExtendedFormatted =>
-        $"{AppInfoFormatted}{Environment.NewLine}" +
+        $"{AppInfoFormatted}{Environment.NewLine}{Environment.NewLine}" +
         $"Features:{Environment.NewLine}" +
         $"  • A simple basic calculator;{Environment.NewLine}" +
         $"  • Number base converter;{Environment.NewLine}" +
