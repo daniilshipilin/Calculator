@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ApplicationUpdater;
 using Calculator.Helpers;
-using MathExpressionParser;
+using Calculator.Helpers.MathExpressionParser;
 
 public partial class MainForm : Form
 {
