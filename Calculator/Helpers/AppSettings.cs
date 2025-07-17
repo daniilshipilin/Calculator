@@ -1,8 +1,6 @@
 namespace Calculator.Helpers;
 
-using System;
 using System.Collections.Generic;
-using System.Globalization;
 using Microsoft.Win32;
 
 public static class AppSettings
@@ -16,14 +14,13 @@ public static class AppSettings
         RegistryBaseKey + "\\Calculator";
 #endif
 
-    public const int CurrentConfigVersion = 9;
+    public const int CurrentConfigVersion = 10;
 
     private static readonly RegistryKey RegKeyCalculator = Registry.CurrentUser.CreateSubKey(RegistryCalculatorKey);
 
     private static readonly IReadOnlyDictionary<string, object> DefaultSettingsDict = new Dictionary<string, object>()
     {
         { nameof(ConfigVersion), CurrentConfigVersion },
-        { nameof(UpdatesLastCheckedTimestamp), default(DateTime).ToString("s") },
         { nameof(TopMost), false },
         { nameof(CurrencyConverterApiKey), "" },
         { nameof(HexDelimiter), "0x" },
@@ -49,13 +46,6 @@ public static class AppSettings
         get => (int?)RegKeyCalculator.GetValue(nameof(ConfigVersion));
 
         set => RegKeyCalculator.SetValue(nameof(ConfigVersion), value ?? 0);
-    }
-
-    public static DateTime UpdatesLastCheckedTimestamp
-    {
-        get => DateTime.ParseExact((string?)RegKeyCalculator.GetValue(nameof(UpdatesLastCheckedTimestamp)) ?? string.Empty, "s", CultureInfo.InvariantCulture);
-
-        private set => RegKeyCalculator.SetValue(nameof(UpdatesLastCheckedTimestamp), value.ToString("s", CultureInfo.InvariantCulture));
     }
 
     public static bool TopMost
@@ -183,8 +173,6 @@ public static class AppSettings
 
         set => RegKeyCalculator.SetValue(nameof(PasswordCharset), value);
     }
-
-    public static void UpdateUpdatesLastCheckedTimestamp() => UpdatesLastCheckedTimestamp = DateTime.Now;
 
     public static void CheckSettings()
     {

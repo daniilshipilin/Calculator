@@ -4,9 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using ApplicationUpdater;
 using Calculator.Helpers;
 using Calculator.Helpers.MathExpressionParser;
 
@@ -20,8 +18,6 @@ public partial class MainForm : Form
 
     private string dateTimeStringFormat = string.Empty;
 
-    private IUpdater? updater;
-
     // Boolean flag used to determine when a character other than a number is entered
     private bool NonNumberEntered = false;
 
@@ -33,19 +29,13 @@ public partial class MainForm : Form
         this.InitializeComponent();
     }
 
-    private async void CalculatorForm_Load(object sender, EventArgs e)
+    private void CalculatorForm_Load(object sender, EventArgs e)
     {
         AppSettings.CheckSettings();
         this.Text = $"{ApplicationInfo.AppHeader}";
         this.dateTimeStringFormat = AppSettings.DateTimeStringFormat;
         this.SetTooltips();
         this.InitTimers();
-
-        // init program updater
-        this.InitUpdater();
-
-        // check for updates
-        await this.CheckUpdates();
     }
 
     private void SetTooltips()
@@ -73,112 +63,6 @@ public partial class MainForm : Form
         this.dateTimeUpdateTimer.Tick += this.UpdateDateTime;
         this.dateTimeUpdateTimer.Interval = DateTimeUpdateTimerMs;
         this.dateTimeUpdateTimer.Start();
-    }
-
-    private void InitUpdater()
-    {
-        try
-        {
-            this.updater = new Updater(
-                ApplicationInfo.BaseDirectory,
-                Version.Parse(GitVersionInformation.SemVer),
-                ApplicationInfo.AppGUID,
-                ApplicationInfo.ExePath);
-        }
-        catch (Exception ex)
-        {
-            ShowExceptionMessage(ex);
-        }
-    }
-
-    private async Task CheckUpdates(bool forceCheck = false)
-    {
-        if (this.updater is null)
-        {
-            return;
-        }
-
-        try
-        {
-            this.updatesMenuItem.Enabled = false;
-
-            if (forceCheck)
-            {
-                AppSettings.UpdateUpdatesLastCheckedTimestamp();
-
-                if (await this.updater.CheckUpdateIsAvailable())
-                {
-                    var dr = MessageBox.Show(
-                        new Form { TopMost = true },
-                        this.updater.GetUpdatePrompt(),
-                        "Program update",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question);
-
-                    if (dr == DialogResult.Yes)
-                    {
-                        var updateForm = new Form
-                        {
-                            Text = "Program update",
-                            Width = 300,
-                            Height = 150,
-                            FormBorderStyle = FormBorderStyle.FixedSingle,
-                            StartPosition = FormStartPosition.CenterScreen,
-                            ShowInTaskbar = false,
-                            ShowIcon = false,
-                            MinimizeBox = false,
-                            MaximizeBox = false,
-                            TopMost = AppSettings.TopMost,
-                        };
-
-                        var label = new Label
-                        {
-                            Size = new Size(300, 100),
-                            TextAlign = ContentAlignment.MiddleCenter,
-                            Text = $"Updating {ApplicationInfo.AppTitle} v{GitVersionInformation.SemVer} to version v{this.updater.ServerVersion}"
-                        };
-
-                        updateForm.Controls.Add(label);
-                        updateForm.Show();
-
-                        await this.updater.Update();
-                        Program.ProgramExit();
-                    }
-
-                    return;
-                }
-
-                MessageBox.Show(
-                    "Current program version is up to date.",
-                    "Program update",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
-            }
-            else if ((DateTime.Now - AppSettings.UpdatesLastCheckedTimestamp).Days >= 1)
-            {
-                AppSettings.UpdateUpdatesLastCheckedTimestamp();
-
-                if (await this.updater.CheckUpdateIsAvailable())
-                {
-                    var dr = MessageBox.Show(
-                        new Form { TopMost = true },
-                        $"Newer program version available.{Environment.NewLine}" +
-                        $"Current: {this.updater.ClientVersion}{Environment.NewLine}" +
-                        $"Available: {this.updater.ServerVersion}",
-                        "Program update",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question);
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            ShowExceptionMessage(ex);
-        }
-        finally
-        {
-            this.updatesMenuItem.Enabled = true;
-        }
     }
 
     private static void ShowExceptionMessage(Exception ex)
@@ -747,6 +631,4 @@ public partial class MainForm : Form
         this.TopMost = val;
         AppSettings.TopMost = val;
     }
-
-    private async void UpdatesMenuItem_Click(object sender, EventArgs e) => await this.CheckUpdates(true);
 }
