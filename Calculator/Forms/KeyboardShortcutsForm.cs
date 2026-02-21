@@ -14,7 +14,6 @@ public partial class KeyboardShortcutsForm : Form
     private void KeyboardShortcutsForm_Load(object sender, EventArgs e)
     {
         this.keyboardShortcutsTextBox.Text = ApplicationInfo.ShortcutsFormatted;
-
         this.TopMost = AppSettings.TopMost;
     }
 

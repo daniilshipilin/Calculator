@@ -13,8 +13,7 @@ public partial class AboutForm : Form
 
     private void AboutForm_Load(object sender, EventArgs e)
     {
-        this.aboutTextBox.Text = ApplicationInfo.AppInfoExtendedFormatted;
-
+        this.aboutTextBox.Text = ApplicationInfo.AppInfoFormatted;
         this.TopMost = AppSettings.TopMost;
     }
 

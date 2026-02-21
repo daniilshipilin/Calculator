@@ -10,6 +10,7 @@
         <Description>A simple basic calculator.</Description>
         <Company>Illuminati Software Inc.</Company>
         <PackageIcon>calculator.png</PackageIcon>
+        <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     </PropertyGroup>
     <ItemGroup>
         <None Include="Images\calculator.png">

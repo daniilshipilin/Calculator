@@ -32,7 +32,7 @@ public partial class MainForm : Form
     private void CalculatorForm_Load(object sender, EventArgs e)
     {
         AppSettings.CheckSettings();
-        this.Text = $"{ApplicationInfo.AppHeader}";
+        this.Text = ApplicationInfo.AppHeader;
         this.dateTimeStringFormat = AppSettings.DateTimeStringFormat;
         this.SetTooltips();
         this.InitTimers();

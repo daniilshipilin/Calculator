@@ -22,7 +22,6 @@ public static class Program
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
 
-        // check, if there is another instance running
         if (CheckAnotherInstanceIsRunning(ApplicationInfo.AppTitle))
         {
             MessageBox.Show(
@@ -35,7 +34,6 @@ public static class Program
             ProgramExit(ExitCode.AnotherInstanceRunning);
         }
 
-        // handle special case, when we pass single argument
         if (args.Length == 1 && args[0].Equals("/?"))
         {
             var aboutForm = new AboutForm();
@@ -43,13 +41,13 @@ public static class Program
             return;
         }
 
-        ApplicationInfo.SetArgs(args);
         Application.Run(new MainForm());
-
         ProgramExit(ExitCode.Success);
     }
 
-    public static void ProgramExit(ExitCode exitCode = ExitCode.Success) => Environment.Exit((int)exitCode);
+    public static void ProgramExit(ExitCode exitCode = ExitCode.Success)
+        => Environment.Exit((int)exitCode);
 
-    private static bool CheckAnotherInstanceIsRunning(string programName) => Process.GetProcessesByName(programName).Length > 1;
+    private static bool CheckAnotherInstanceIsRunning(string? programName)
+        => Process.GetProcessesByName(programName).Length > 1;
 }
