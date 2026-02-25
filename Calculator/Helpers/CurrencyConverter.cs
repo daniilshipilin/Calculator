@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Calculator.Configuration;
 using Calculator.Models;
 
 public static class CurrencyConverter

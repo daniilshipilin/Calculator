@@ -53,8 +53,6 @@ namespace Calculator.Forms
             this.bracketOpenButton = new System.Windows.Forms.Button();
             this.exponentiationButton = new System.Windows.Forms.Button();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
-            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.topmostToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.numberBaseConverterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stringBase64ConverterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -391,28 +389,13 @@ namespace Calculator.Forms
             this.menuStrip.BackColor = System.Drawing.Color.Gainsboro;
             this.menuStrip.Font = new System.Drawing.Font("Consolas", 9.75F);
             this.menuStrip.GripMargin = new System.Windows.Forms.Padding(3);
-            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.settingsToolStripMenuItem, this.toolsToolStripMenuItem, this.helpToolStripMenuItem });
+            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.toolsToolStripMenuItem, this.helpToolStripMenuItem });
             this.menuStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.menuStrip.Size = new System.Drawing.Size(478, 25);
             this.menuStrip.TabIndex = 0;
-            // 
-            // settingsToolStripMenuItem
-            // 
-            this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.topmostToolStripMenuItem });
-            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(75, 19);
-            this.settingsToolStripMenuItem.Text = "&Settings";
-            // 
-            // topmostToolStripMenuItem
-            // 
-            this.topmostToolStripMenuItem.CheckOnClick = true;
-            this.topmostToolStripMenuItem.Name = "topmostToolStripMenuItem";
-            this.topmostToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.topmostToolStripMenuItem.Text = "&Topmost";
-            this.topmostToolStripMenuItem.CheckedChanged += this.TopmostToolStripMenuItem_CheckedChanged;
             // 
             // toolsToolStripMenuItem
             // 
@@ -791,7 +774,6 @@ namespace Calculator.Forms
         private System.Windows.Forms.Button moduloButton;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button backspaceButton;
-        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.Label previousCommandLabel;
         private System.Windows.Forms.Label memoryLabel;
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
@@ -811,7 +793,6 @@ namespace Calculator.Forms
         private System.Windows.Forms.ToolStripMenuItem asciiTableToolStripMenuItem;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel dateTimeToolStripStatusLabel;
-        private System.Windows.Forms.ToolStripMenuItem topmostToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator helpToolStripSeparator;
         private System.Windows.Forms.Timer dateTimeUpdateTimer;
         private System.Windows.Forms.Timer funnyTimer;

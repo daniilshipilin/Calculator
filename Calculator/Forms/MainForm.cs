@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Calculator.Helpers;
+using Calculator.Configuration;
 using Calculator.Helpers.MathExpressionParser;
 
 public partial class MainForm : Form
@@ -622,13 +622,5 @@ public partial class MainForm : Form
     {
         var fuelcostCalculatorForm = new FuelcostCalculatorForm();
         fuelcostCalculatorForm.Show();
-    }
-
-    private void TopmostToolStripMenuItem_CheckedChanged(object sender, EventArgs e) => this.SetProgramTopmostVal(this.topmostToolStripMenuItem.Checked);
-
-    private void SetProgramTopmostVal(bool val)
-    {
-        this.TopMost = val;
-        AppSettings.TopMost = val;
     }
 }

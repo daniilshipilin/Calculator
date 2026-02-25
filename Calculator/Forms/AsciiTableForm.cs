@@ -41,8 +41,6 @@ public partial class AsciiTableForm : Form
         this.extendedAsciiHeaderTextBox.Text = "DEC\tHEX\tCHAR";
         this.asciiTextBox.Text = ascii;
         this.extendedAsciiTextBox.Text = extended;
-
-        this.TopMost = AppSettings.TopMost;
     }
 
     private void AsciiTableForm_KeyDown(object sender, KeyEventArgs e)

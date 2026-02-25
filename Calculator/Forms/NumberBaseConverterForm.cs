@@ -2,7 +2,6 @@ namespace Calculator.Forms;
 
 using System;
 using System.Windows.Forms;
-using Calculator.Helpers;
 
 public partial class NumberBaseConverterForm : Form
 {
@@ -24,8 +23,6 @@ public partial class NumberBaseConverterForm : Form
 
         // button tooltips
         this.numberBaseConverterFormToolTip.SetToolTip(this.invertValueButton, "Invert current value");
-
-        this.TopMost = AppSettings.TopMost;
     }
 
     private void ClearButton_Click(object sender, EventArgs e) => this.ClearTextBoxFields();

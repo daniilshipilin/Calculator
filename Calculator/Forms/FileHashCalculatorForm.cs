@@ -7,7 +7,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Calculator.Helpers;
+using Calculator.Configuration;
 using DamienG.Security.Cryptography;
 
 public partial class FileHashCalculatorForm : Form
@@ -41,8 +41,6 @@ public partial class FileHashCalculatorForm : Form
         this.sha256CheckBox.Checked = AppSettings.Sha256Checked;
         this.sha384CheckBox.Checked = AppSettings.Sha384Checked;
         this.sha512CheckBox.Checked = AppSettings.Sha512Checked;
-
-        this.TopMost = AppSettings.TopMost;
     }
 
     private void CalculateFileHashForm_KeyDown(object sender, KeyEventArgs e)

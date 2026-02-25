@@ -2,7 +2,6 @@ namespace Calculator.Forms;
 
 using System;
 using System.Windows.Forms;
-using Calculator.Helpers;
 
 public partial class ClockForm : Form
 {
@@ -13,8 +12,6 @@ public partial class ClockForm : Form
 
     private void ClockForm_Load(object sender, EventArgs e)
     {
-        this.TopMost = AppSettings.TopMost;
-
         this.timeLabel.Text = string.Empty;
         this.dateLabel.Text = string.Empty;
 

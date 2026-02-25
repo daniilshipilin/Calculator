@@ -4,7 +4,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using Calculator.Helpers;
+using Calculator.Configuration;
 
 public partial class Base64StringConverterForm : Form
 {
@@ -16,7 +16,6 @@ public partial class Base64StringConverterForm : Form
     private void Base64StringConverterForm_Load(object sender, EventArgs e)
     {
         this.modeSelectComboBox.Text = AppSettings.Base64Mode;
-        this.TopMost = AppSettings.TopMost;
     }
 
     private void Base64StringConverterForm_KeyDown(object sender, KeyEventArgs e)

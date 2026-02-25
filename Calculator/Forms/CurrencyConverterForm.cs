@@ -4,7 +4,6 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Calculator.Forms;
 using Calculator.Helpers;
 
 public partial class CurrencyConverterForm : Form
@@ -16,7 +15,6 @@ public partial class CurrencyConverterForm : Form
 
     private void CurrencyConverterForm_Load(object sender, EventArgs e)
     {
-        this.TopMost = AppSettings.TopMost;
         this.UpdateCurrenciesComboBoxes();
         this.UpdateCurrenciesRatesTextBoxes();
         this.statusLabel.Text = string.Empty;

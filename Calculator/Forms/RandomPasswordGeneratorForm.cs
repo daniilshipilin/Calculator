@@ -8,7 +8,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Calculator.Helpers;
+using Calculator.Configuration;
 
 public partial class RandomPasswordGeneratorForm : Form
 {
@@ -44,7 +44,6 @@ public partial class RandomPasswordGeneratorForm : Form
 
     private void RandomPasswordGeneratorForm_Load(object sender, EventArgs e)
     {
-        this.TopMost = AppSettings.TopMost;
         this.saveToFileButton.Enabled = false;
 
         this.qtyTextBox.Text = AppSettings.PasswordQty.ToString();

@@ -8,7 +8,7 @@ using System.Drawing.Imaging;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Calculator.Helpers;
+using Calculator.Configuration;
 
 public partial class RandomNumberGeneratorForm : Form
 {
@@ -36,8 +36,6 @@ public partial class RandomNumberGeneratorForm : Form
         this.qtyTextBox.Text = AppSettings.RandomQty.ToString();
         this.minTextBox.Text = AppSettings.RandomMin.ToString();
         this.maxTextBox.Text = AppSettings.RandomMax.ToString();
-
-        this.TopMost = AppSettings.TopMost;
     }
 
     private void RandomNumberGeneratorForm_KeyDown(object sender, KeyEventArgs e)
@@ -248,7 +246,6 @@ public partial class RandomNumberGeneratorForm : Form
             ShowIcon = false,
             MinimizeBox = false,
             MaximizeBox = false,
-            TopMost = AppSettings.TopMost,
         };
 
         // container for generated bitmap

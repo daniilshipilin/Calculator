@@ -3,6 +3,7 @@ namespace Calculator.Forms;
 using System;
 using System.Text;
 using System.Windows.Forms;
+using Calculator.Configuration;
 using Calculator.Helpers;
 
 public partial class HexToAsciiConverterForm : Form
@@ -17,8 +18,6 @@ public partial class HexToAsciiConverterForm : Form
         this.hexDelimiterTextBox.Text = string.Empty;
 
         this.hexDelimiterTextBox.Text = AppSettings.HexDelimiter;
-
-        this.TopMost = AppSettings.TopMost;
     }
 
     private void HexToAsciiConverterForm_KeyDown(object sender, KeyEventArgs e)
