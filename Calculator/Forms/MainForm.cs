@@ -16,8 +16,6 @@ public partial class MainForm : Form
     // flag, that indicates, if calculation process completed successfully
     private bool calculationIsDone = false;
 
-    private string dateTimeStringFormat = string.Empty;
-
     // Boolean flag used to determine when a character other than a number is entered
     private bool NonNumberEntered = false;
 
@@ -33,7 +31,6 @@ public partial class MainForm : Form
     {
         AppSettings.CheckSettings();
         this.Text = ApplicationInfo.AppHeader;
-        this.dateTimeStringFormat = AppSettings.DateTimeStringFormat;
         this.SetTooltips();
         this.InitTimers();
     }
@@ -75,7 +72,8 @@ public partial class MainForm : Form
             MessageBoxIcon.Error);
     }
 
-    private void UpdateDateTime(object? sender, EventArgs e) => this.dateTimeToolStripStatusLabel.Text = DateTime.Now.ToString(this.dateTimeStringFormat);
+    private void UpdateDateTime(object? sender, EventArgs e)
+        => this.dateTimeToolStripStatusLabel.Text = DateTime.Now.ToString("R");
 
     private void AnalyzeButtonPressed(object sender, EventArgs e)
     {

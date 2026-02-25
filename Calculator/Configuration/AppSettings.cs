@@ -34,7 +34,6 @@ public static class AppSettings
         { nameof(RandomQty), 1000 },
         { nameof(RandomMin), -1000000 },
         { nameof(RandomMax), 1000000 },
-        { nameof(DateTimeStringFormat), "dddd dd MMMM yyyy HH:mm:ss zzz" },
         { nameof(PasswordQty), 10 },
         { nameof(PasswordLength), 16 },
         { nameof(PasswordCharset), "PasswordCharset" },
@@ -136,13 +135,6 @@ public static class AppSettings
         get => (int?)RegKeyCalculator.GetValue(nameof(RandomMax)) ?? 0;
 
         set => RegKeyCalculator.SetValue(nameof(RandomMax), value);
-    }
-
-    public static string DateTimeStringFormat
-    {
-        get => (string?)RegKeyCalculator.GetValue(nameof(DateTimeStringFormat)) ?? string.Empty;
-
-        set => RegKeyCalculator.SetValue(nameof(DateTimeStringFormat), value);
     }
 
     public static int PasswordQty
