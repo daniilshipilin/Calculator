@@ -35,8 +35,6 @@ public partial class RandomPasswordGeneratorForm : Form
         { "GuidFormat", "GUID 8-4-4-4-12 format" },
     };
 
-    private IEnumerable<string> rndPasswords = [];
-
     public RandomPasswordGeneratorForm()
     {
         this.InitializeComponent();
@@ -45,6 +43,7 @@ public partial class RandomPasswordGeneratorForm : Form
     private void RandomPasswordGeneratorForm_Load(object sender, EventArgs e)
     {
         this.saveToFileButton.Enabled = false;
+        this.copyButton.Enabled = false;
 
         this.qtyTextBox.Text = AppSettings.PasswordQty.ToString();
         this.passwordLengthTextBox.Text = AppSettings.PasswordLength.ToString();
@@ -126,7 +125,7 @@ public partial class RandomPasswordGeneratorForm : Form
         var sw = Stopwatch.StartNew();
 
         var task = guidGenerate
-            ? Task.Run(() => this.GenerateRandomGuids(qty))
+            ? Task.Run(() => GenerateRandomGuids(qty))
             : this.uniqueSequenceCheckBox.Checked
                 ? Task.Run(() => this.GenerateRandomUniqueSequencePasswords(this.charsetCharsTextBox.Text, qty, length))
                 : Task.Run(() => this.GenerateRandomPasswords(this.charsetCharsTextBox.Text, qty, length));
@@ -135,7 +134,7 @@ public partial class RandomPasswordGeneratorForm : Form
 
         sw.Stop();
 
-        this.outputTextBox.Text = string.Join(Environment.NewLine, this.rndPasswords);
+        this.outputTextBox.Text = string.Join(Environment.NewLine, task.Result);
 
         this.toolStripStatusLabel.Text = $"Elapsed: {sw.ElapsedMilliseconds} ms.";
 
@@ -143,6 +142,7 @@ public partial class RandomPasswordGeneratorForm : Form
         this.progressBar.Value = 100;
         this.generateButton.Enabled = true;
         this.saveToFileButton.Enabled = true;
+        this.copyButton.Enabled = true;
     }
 
     private static bool CharsetIsUnique(string charset)
@@ -163,7 +163,7 @@ public partial class RandomPasswordGeneratorForm : Form
         return true;
     }
 
-    private void GenerateRandomGuids(int qty)
+    private static IEnumerable<string> GenerateRandomGuids(int qty)
     {
         string[] guids = new string[qty];
 
@@ -174,10 +174,10 @@ public partial class RandomPasswordGeneratorForm : Form
             guids[i] = new Guid(bytes).ToString();
         }
 
-        this.rndPasswords = guids;
+        return guids;
     }
 
-    private void GenerateRandomPasswords(string charset, int qty, int length)
+    private IEnumerable<string> GenerateRandomPasswords(string charset, int qty, int length)
     {
         string[] passwords = new string[qty];
 
@@ -194,10 +194,10 @@ public partial class RandomPasswordGeneratorForm : Form
             passwords[i] = new string(randomPassword);
         }
 
-        this.rndPasswords = passwords;
+        return passwords;
     }
 
-    private void GenerateRandomUniqueSequencePasswords(string charset, int qty, int length)
+    private IEnumerable<string> GenerateRandomUniqueSequencePasswords(string charset, int qty, int length)
     {
         string[] passwords = new string[qty];
 
@@ -216,7 +216,7 @@ public partial class RandomPasswordGeneratorForm : Form
             passwords[i] = new string(randomPassword);
         }
 
-        this.rndPasswords = passwords;
+        return passwords;
     }
 
     private void ClearButton_Click(object sender, EventArgs e)
@@ -228,7 +228,7 @@ public partial class RandomPasswordGeneratorForm : Form
         this.progressBar.Value = 0;
         this.toolStripStatusLabel.Text = string.Empty;
         this.saveToFileButton.Enabled = false;
-        this.rndPasswords = [];
+        this.copyButton.Enabled = false;
     }
 
     private void QtyTextBox_TextChanged(object sender, EventArgs e)
@@ -276,7 +276,20 @@ public partial class RandomPasswordGeneratorForm : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"{ex.Message}", "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(ex.Message, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
+    private void CopyButton_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            Clipboard.SetDataObject(this.outputTextBox.Text);
+            this.toolStripStatusLabel.Text = "Data copied to the clipboard";
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }
